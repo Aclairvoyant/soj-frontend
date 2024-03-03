@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import { routes } from "@/router/routes";
 import { useRoute, useRouter } from "vue-router";
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
 import AccessEnum from "@/access/accessEnum";
@@ -65,13 +65,6 @@ router.afterEach((to, from, failure) => {
   selectedKeys.value = [to.path];
 });
 
-setTimeout(() => {
-  store.dispatch("user/getLoginUser", {
-    userName: "admin",
-    userRole: AccessEnum.ADMIN
-  });
-  console.log(store.state.user.loginUser.userRole)
-}, 3000)
 
 const doMenuClick = (key: string) => {
   router.push({

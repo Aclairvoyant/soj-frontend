@@ -36,6 +36,8 @@ export type { PostUpdateRequest } from './models/PostUpdateRequest';
 export type { PostVO } from './models/PostVO';
 export type { User } from './models/User';
 export type { UserAddRequest } from './models/UserAddRequest';
+export type { UserForgetPasswordRequest } from './models/UserForgetPasswordRequest';
+export type { UserLoginByMailRequest } from './models/UserLoginByMailRequest';
 export type { UserLoginRequest } from './models/UserLoginRequest';
 export type { UserQueryRequest } from './models/UserQueryRequest';
 export type { UserRegisterRequest } from './models/UserRegisterRequest';
