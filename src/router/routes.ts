@@ -3,9 +3,7 @@ import HomeView from "@/views/HomeView.vue";
 import AdminView from "@/views/AdminView.vue";
 import NoAuthView from "@/views/NoAuthView.vue";
 import AccessEnum from "@/access/accessEnum";
-import UserLayout from "@/layouts/UserLayout.vue";
-import UserLoginView from "@/views/user/UserLoginView.vue";
-import UserRegisterView from "@/views/user/UserRegisterView.vue";
+import UserLoginIndex from "@/views/user/UserLoginIndex.vue";
 
 export const routes: Array<RouteRecordRaw> = [
     {
@@ -14,17 +12,11 @@ export const routes: Array<RouteRecordRaw> = [
         meta: {
             hideInMenu: true
         },
-        component: UserLayout,
         children: [
             {
                 path: "/user/login",
-                name: "登录",
-                component: UserLoginView
-            },
-            {
-                path: "/user/register",
-                name: "注册",
-                component: UserRegisterView
+                name: "登录注册",
+                component: UserLoginIndex
             },
         ],
     },

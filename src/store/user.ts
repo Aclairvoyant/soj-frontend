@@ -12,10 +12,16 @@ export default {
     actions: {
         // 获取登录用户信息
         async getLoginUser({ commit, state }, payload) {
-            const res = await UserControllerService.getLoginUserUsingGet();
-            if (res.code === 200) {
-                commit("updateUser", res.data);
-            } else {
+            try {
+                //拿到payload信息，如果没有内容，则远程进行请求数据
+                if (payload === undefined) {
+                    payload = await UserControllerService.getLoginUserUsingGet();
+                }
+                // 从远程请求获取登录信息
+                if (payload.code === 200) {
+                    commit("updateUser", payload.data);
+                }
+            } catch (e) {
                 commit("updateUser", {
                     ...state.loginUser,
                     userRole: AccessEnum.NOT_LOGIN,

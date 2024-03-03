@@ -4,6 +4,7 @@
 /* eslint-disable */
 export type User = {
     createTime?: string;
+    email?: string;
     id?: number;
     isDelete?: number;
     mpOpenId?: string;

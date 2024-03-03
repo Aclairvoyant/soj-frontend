@@ -2,11 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type UserRegisterRequest = {
-    checkPassword?: string;
+export type UserLoginByMailRequest = {
     email?: string;
     emailCode?: string;
-    userAccount?: string;
-    userPassword?: string;
 };
 

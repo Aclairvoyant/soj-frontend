@@ -7,10 +7,13 @@ import type { BaseResponse_LoginUserVO_ } from '../models/BaseResponse_LoginUser
 import type { BaseResponse_long_ } from '../models/BaseResponse_long_';
 import type { BaseResponse_Page_User_ } from '../models/BaseResponse_Page_User_';
 import type { BaseResponse_Page_UserVO_ } from '../models/BaseResponse_Page_UserVO_';
+import type { BaseResponse_string_ } from '../models/BaseResponse_string_';
 import type { BaseResponse_User_ } from '../models/BaseResponse_User_';
 import type { BaseResponse_UserVO_ } from '../models/BaseResponse_UserVO_';
 import type { DeleteRequest } from '../models/DeleteRequest';
 import type { UserAddRequest } from '../models/UserAddRequest';
+import type { UserForgetPasswordRequest } from '../models/UserForgetPasswordRequest';
+import type { UserLoginByMailRequest } from '../models/UserLoginByMailRequest';
 import type { UserLoginRequest } from '../models/UserLoginRequest';
 import type { UserQueryRequest } from '../models/UserQueryRequest';
 import type { UserRegisterRequest } from '../models/UserRegisterRequest';
@@ -55,6 +58,27 @@ export class UserControllerService {
             method: 'POST',
             url: '/api/user/delete',
             body: deleteRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * forgetPassword
+     * @param userForgetPasswordRequest userForgetPasswordRequest
+     * @returns BaseResponse_string_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static forgetPasswordUsingPost(
+        userForgetPasswordRequest: UserForgetPasswordRequest,
+    ): CancelablePromise<BaseResponse_string_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/user/forgetPassword',
+            body: userForgetPasswordRequest,
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,
@@ -208,6 +232,27 @@ export class UserControllerService {
         });
     }
     /**
+     * loginByMail
+     * @param mailRequest mailRequest
+     * @returns BaseResponse_LoginUserVO_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static loginByMailUsingPost(
+        mailRequest: UserLoginByMailRequest,
+    ): CancelablePromise<BaseResponse_LoginUserVO_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/user/loginByMail',
+            body: mailRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
      * userLogout
      * @returns BaseResponse_boolean_ OK
      * @returns any Created
@@ -238,6 +283,28 @@ export class UserControllerService {
             method: 'POST',
             url: '/api/user/register',
             body: userRegisterRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * sendMailCode
+     * @param mail mail
+     * @returns BaseResponse_string_ OK
+     * @throws ApiError
+     */
+    public static sendMailCodeUsingGet(
+        mail: string,
+    ): CancelablePromise<BaseResponse_string_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/user/sendMailCode',
+            query: {
+                'mail': mail,
+            },
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,
