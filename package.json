@@ -9,11 +9,19 @@
     "codegen": "openapi --input http://localhost:8081/api/v2/api-docs --output ./generated --client axios"
   },
   "dependencies": {
+    "@babel/plugin-transform-class-static-block": "^7.23.4",
+    "@bytemd/plugin-gfm": "^1.21.0",
+    "@bytemd/plugin-highlight": "^1.21.0",
+    "@bytemd/vue-next": "^1.21.0",
     "axios": "^1.6.7",
+    "codemirror": "^6.0.1",
     "core-js": "^3.8.3",
     "echarts": "^5.5.0",
     "less-loader": "^12.2.0",
+    "monaco-editor": "^0.46.0",
+    "monaco-editor-webpack-plugin": "^7.1.0",
     "vue": "^3.2.13",
+    "vue-codemirror": "^6.1.1",
     "vue-router": "^4.0.3",
     "vuex": "^4.0.0"
   },
