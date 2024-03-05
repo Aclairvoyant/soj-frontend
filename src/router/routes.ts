@@ -4,6 +4,7 @@ import AdminView from "@/views/AdminView.vue";
 import NoAuthView from "@/views/NoAuthView.vue";
 import AccessEnum from "@/access/accessEnum";
 import UserLoginIndex from "@/views/user/UserLoginIndex.vue";
+import AddQuestionView from "@/views/question/AddQuestionView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
     {
@@ -26,9 +27,12 @@ export const routes: Array<RouteRecordRaw> = [
         component: HomeView,
     },
     {
-        path: "/noAuth",
-        name: "NoAuth",
-        component: NoAuthView,
+        path: "/add/question",
+        name: "创建题目",
+        component: AddQuestionView,
+        meta: {
+            access: AccessEnum.ADMIN
+        }
     },
     {
         path: "/hide",
