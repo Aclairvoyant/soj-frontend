@@ -160,9 +160,8 @@ const loadData = async () => {
   if (!id) {
     return;
   }
-  const res = await QuestionControllerService.getQuestionVoByIdUsingGet(
-    id as any
-  );
+  const res = await QuestionControllerService.getQuestionByIdUsingGet(id as any);
+
   if (res.code === 200) {
     form.value = res.data as any;
     // json 转 js 对象
@@ -200,7 +199,6 @@ onMounted(() => {
 });
 
 const doSubmit = async () => {
-  console.log(form.value);
   // 区分更新还是创建
   if (updatePage) {
     const res = await QuestionControllerService.updateQuestionUsingPost(
