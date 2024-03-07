@@ -9,6 +9,7 @@ import QuestionsView from "@/views/question/QuestionsView.vue";
 import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
 import accessEnum from "@/access/accessEnum";
 import DoQuestionView from "@/views/question/DoQuestionView.vue";
+import AboutView from "@/views/AboutView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
     {
@@ -71,17 +72,11 @@ export const routes: Array<RouteRecordRaw> = [
         }
     },
     {
-        path: "/admin",
-        name: "admin",
-        component: AdminView,
-        meta: {
-            access: AccessEnum.ADMIN
-        },
-    },
-    {
         path: "/about",
         name: "关于我的",
-        component: () =>
-            import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+        component: AboutView,
+        meta: {
+            access: AccessEnum.USER
+        }
     },
 ];

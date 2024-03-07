@@ -59,7 +59,7 @@
             {{ allCasesCollapsed ? "展开全部测试用例" : "收起全部测试用例" }}
           </a-button>
 
-          <a-button @click="handleDeleteAllCases" type="danger">
+          <a-button @click="handleDeleteAllCases" status="danger">
             删除全部测试用例
           </a-button>
           <!-- 遍历并显示所有测试用例 -->
@@ -96,6 +96,12 @@
       </a-form-item>
       <a-form-item>
         <input type="file" @change="handleFileUpload" accept=".xlsx, .xls" />
+      </a-form-item>
+
+      <a-form-item>
+        <a-button status="danger" style="min-width: 200px" @click="doCleanDraft"
+          >清除草稿
+        </a-button>
       </a-form-item>
 
       <div style="margin-top: 16px" />
@@ -142,9 +148,16 @@ let form = ref({
   ],
 });
 
+// watch(() => form.value, (newValue) => {
+//   localStorage.setItem('formDraft', JSON.stringify(newValue));
+// }, { deep: true });
+
 watch(() => form.value, (newValue) => {
-  localStorage.setItem('formDraft', JSON.stringify(newValue));
+  if (!updatePage) { // 仅在“创建题目”状态下保存草稿
+    localStorage.setItem('formDraft', JSON.stringify(newValue));
+  }
 }, { deep: true });
+
 
 const allCasesCollapsed = ref(false); // 初始状态为false，表示测试用例默认展开
 
@@ -209,8 +222,11 @@ const doSubmit = async () => {
       await router.push({
         path: "/questions",
       });
+      // 清理草稿数据
+      localStorage.removeItem('formDraft');
     } else {
       message.error("更新失败，" + res.message);
+      localStorage.removeItem('formDraft');
     }
   } else {
     const res = await QuestionControllerService.addQuestionUsingPost(
@@ -221,7 +237,8 @@ const doSubmit = async () => {
         path: "/questions",
       });
       message.success("创建成功");
-      handleSubmit();
+      // 清理草稿数据
+      localStorage.removeItem('formDraft');
     } else {
       message.error("创建失败，" + res.message);
     }
@@ -282,21 +299,55 @@ function onFieldUpdate() {
 
 // 页面加载或组件挂载时尝试恢复草稿
 function loadDraft() {
-  const draft = localStorage.getItem('formDraft');
-  if (draft) {
-    form.value = JSON.parse(draft);
+  if (!updatePage) { // 仅在“创建题目”状态下尝试加载草稿
+    const draft = localStorage.getItem('formDraft');
+    if (draft) {
+      form.value = JSON.parse(draft);
+    }
+  } else {
+    // “修改题目”状态下，调用loadData加载特定题目的数据
+    loadData();
   }
 }
+
 
 // 在Vue组件的mounted生命周期钩子中调用loadDraft
 onMounted(() => {
   loadDraft();
 });
 
-const handleSubmit = () => {
-  // 清理草稿数据
-  localStorage.removeItem('formDraft');
-};
+/**
+ * 清除草稿
+ */
+const doCleanDraft = () => {
+  Modal.confirm({
+    title: '确认',
+    content: '确定要删除保存的草稿吗？',
+    onOk() {
+      // 确认删除逻辑
+      localStorage.removeItem('formDraft');
+      form.value = {
+        title: "",
+        tags: [],
+        answer: "",
+        content: "",
+        judgeConfig: {
+          memoryLimit: 1000,
+          stackLimit: 1000,
+          timeLimit: 1000,
+        },
+        judgeCase: [
+          {
+            input: "",
+            output: "",
+          },
+        ],
+      };
+      // todo: 删除文件，修复bug
+
+    },
+  });
+}
 
 /**
  * 新增判题用例

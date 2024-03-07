@@ -22,10 +22,40 @@
         </a-menu-item>
       </a-menu>
     </a-col>
-    <a-col flex="100px">
-      <div>{{ store.state.user?.loginUser?.userName ?? "未登录" }}</div>
+    <a-col flex="150px" class="user-info">
+      <a-avatar v-if="store.state.user?.loginUser.userAvatar" size="small">
+        <img :src=store.state.user?.loginUser.userAvatar alt="avatar" />
+      </a-avatar>
+      <a-dropdown trigger="hover">
+        <span>
+          {{ store.state.user?.loginUser.userName ?? "请登录" }}<icon-down />
+        </span>
+        <template #content>
+          <a-doption @click="dropSubmit">
+            <template #icon>
+              <icon-import />
+            </template>
+            <template #default
+            >{{
+                store.state.user?.loginUser.userName === "未登录"
+                    ? "立即登录"
+                    : "退出登录"
+              }}
+            </template>
+          </a-doption>
+        </template>
+      </a-dropdown>
     </a-col>
   </a-row>
+  <a-modal
+      v-model:visible="visible"
+      @ok="loginOut"
+      @cancel="visible = false"
+      message-type="warning"
+  >
+    <template #title>退出登录</template>
+    <div>您确定要退出登录吗？</div>
+  </a-modal>
 </template>
 
 <script setup lang="ts">
@@ -34,14 +64,15 @@ import { useRoute, useRouter } from "vue-router";
 import {computed, onMounted, ref} from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
-import AccessEnum from "@/access/accessEnum";
+import message from "@arco-design/web-vue/es/message";
+import {UserControllerService} from "../../generated";
 
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
+const visible = ref(false);
 
 const loginUser = store.state.user?.loginUser;
-//console.log(loginUser.userRole);
 
 //展示的路由数组
 const visibleRoutes = computed(() => {
@@ -65,11 +96,44 @@ router.afterEach((to, from, failure) => {
   selectedKeys.value = [to.path];
 });
 
-
 const doMenuClick = (key: string) => {
   router.push({
     path: key,
   });
+};
+/**
+ * 处理退出请求
+ */
+const loginOut = async () => {
+  try {
+    //console.log("退出登录");
+    await UserControllerService.userLogoutUsingPost();
+
+    //退出登录后跳转到登录页面
+    await router.push({
+      path: "/",
+      replace: true,
+    });
+    message.success("退出成功！");
+    // 刷新页面
+    location.reload();
+  } catch (e) {
+    console.log("退出操作异常");
+  }
+};
+
+/**
+ * 处理头像下拉框操作
+ */
+const dropSubmit = () => {
+  if (store.state.user?.loginUser?.userName !== "未登录") {
+    visible.value = true;
+  } else {
+    router.push({
+      path: "/user/login",
+      replace: true,
+    });
+  }
 };
 </script>
 
@@ -87,4 +151,14 @@ const doMenuClick = (key: string) => {
 .logo {
   height: 48px;
 }
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-info .arco-avatar {
+  margin-right: 8px;
+}
+
 </style>
