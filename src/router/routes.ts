@@ -10,6 +10,7 @@ import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
 import accessEnum from "@/access/accessEnum";
 import DoQuestionView from "@/views/question/DoQuestionView.vue";
 import AboutView from "@/views/AboutView.vue";
+import Workplace from "@/views/workplace/index.vue";
 
 export const routes: Array<RouteRecordRaw> = [
     {
@@ -78,5 +79,10 @@ export const routes: Array<RouteRecordRaw> = [
         meta: {
             access: AccessEnum.USER
         }
+    },
+    {
+        path: "/workplace",
+        name: "个人数据总览",
+        component: Workplace,
     },
 ];

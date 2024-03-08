@@ -55,7 +55,7 @@
                 <a-table-column title="判题结果">
                   <template #cell="{ record }">
                     <a-tag :color="record.status === 2 ? '#00b42a' : '#f53f3f'">
-                      {{ record.judgeInfo }}
+                      {{ record.judgeInfo.message }}
                     </a-tag>
                   </template>
                 </a-table-column>

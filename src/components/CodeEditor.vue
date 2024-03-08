@@ -25,7 +25,7 @@ interface Props {
  */
 const props = withDefaults(defineProps<Props>(), {
   value: () => "",
-  language: () => "cpp",
+  language: () => "java",
   handleChange: (v: string) => {
     console.log(v);
   },
