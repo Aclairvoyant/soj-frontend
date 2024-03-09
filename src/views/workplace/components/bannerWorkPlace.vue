@@ -1,6 +1,6 @@
 <template>
   <a-col class="banner">
-    <a-col :span="8">
+    <a-col>
       <a-typography-title :heading="5" style="margin-top: 0">
         欢迎回来！ {{ store.state.user.loginUser.userName }}
       </a-typography-title>
@@ -10,16 +10,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
-import { useStore } from "vuex";
 import store from "../../../store";
 
-const userStore = useStore();
-const userInfo = computed(() => {
-  return {
-    name: "admin",
-  };
-});
 </script>
 
 <style scoped lang="less">

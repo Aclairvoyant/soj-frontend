@@ -11,6 +11,7 @@ import accessEnum from "@/access/accessEnum";
 import DoQuestionView from "@/views/question/DoQuestionView.vue";
 import AboutView from "@/views/AboutView.vue";
 import Workplace from "@/views/workplace/index.vue";
+import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
     {
@@ -73,16 +74,16 @@ export const routes: Array<RouteRecordRaw> = [
         }
     },
     {
-        path: "/about",
-        name: "关于我的",
-        component: AboutView,
-        meta: {
-            access: AccessEnum.USER
-        }
+        path: "/question_submit",
+        name: "浏览题目提交",
+        component: QuestionSubmitView,
     },
     {
         path: "/workplace",
         name: "个人数据总览",
         component: Workplace,
+        meta: {
+            access: accessEnum.USER,
+        }
     },
 ];

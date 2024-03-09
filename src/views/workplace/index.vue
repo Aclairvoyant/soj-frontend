@@ -2,9 +2,23 @@
   <div class="container">
     <div class="left-side">
       <div class="panel">
-        <Banner />
-        <DataPanel />
-        <!--        <ContentChart />-->
+
+        <a-grid :cols="24" :col-gap="16" :row-gap="16">
+          <a-grid-item
+              :span="{ xs: 24, sm: 24, md: 24, lg: 12, xl: 12, xxl: 12 }"
+          >
+            <aboutView />
+          </a-grid-item>
+          <a-grid-item
+              :span="{ xs: 24, sm: 24, md: 24, lg: 12, xl: 12, xxl: 12 }"
+          >
+            <Banner/>
+            <DataPanel />
+          </a-grid-item>
+        </a-grid>
+
+
+<!--                <ContentChart />-->
       </div>
       <a-grid :cols="24" :col-gap="16" :row-gap="16" style="margin-top: 16px">
         <a-grid-item
@@ -27,6 +41,8 @@ import Banner from "./components/bannerWorkPlace.vue";
 import DataPanel from "./components/data-panel.vue";
 import PopularContent from "./components/popular-content.vue";
 import CategoriesPercent from "./components/categories-percent.vue";
+import AboutView from "@/views/workplace/components/aboutView.vue";
+import ContentChart from "@/views/workplace/components/content-chart.vue";
 </script>
 
 <script lang="ts">
@@ -36,11 +52,18 @@ export default {
 </script>
 
 <style lang="less" scoped>
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 .container {
   background-color: var(--color-fill-2);
-  padding: 16px 20px;
-  padding-bottom: 0;
+  padding: 0;
   display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
 }
 
 .left-side {

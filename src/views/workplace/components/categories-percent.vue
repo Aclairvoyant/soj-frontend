@@ -18,7 +18,7 @@ import useLoading from "@/hooks/loading";
 import useChartOption from "@/hooks/chart-option";
 import ChartComponents from "@/components/ChartComponents.vue";
 import { onMounted, ref } from "vue";
-import {QuestionControllerService} from "../../../../generated";
+import {QuestionSolveControllerService} from "../../../../generated";
 
 const { loading } = useLoading();
 const questionUnSolveCount = ref(0);
@@ -26,10 +26,9 @@ const questionSolveCount = ref(0);
 const questionCount = ref(0);
 onMounted(async () => {
   try {
-    //todo 修改请求接口，重新编写请求方法
-    const personalData = await QuestionControllerService.getPersonalDataUsingGet();
-    // questionCount.value = parseInt(personalData.data.questionCount);
-    // questionSolveCount.value = parseInt(personalData.data.questionSolveCount);
+    const personalData = await QuestionSolveControllerService.getPersonalDataUsingGet()
+    questionCount.value = personalData.data?.questionCount ?? 0;
+    questionSolveCount.value = personalData.data?.questionSolveCount ?? 0;
     questionUnSolveCount.value = questionCount.value - questionSolveCount.value;
   } catch (e) {
     //

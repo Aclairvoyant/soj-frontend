@@ -250,49 +250,11 @@ const doUpdate = (question: Question) => {
 };
 </script>
 
-<style scoped>
+<style>
 #manageQuestionView {
   max-width: 1440px;
   margin: 0 auto;
 }
 
-.a-table {
-  --border-color: #e8e8e8;
-  --header-bgcolor: #fafafa;
-}
-
-.a-table .a-button {
-  margin-right: 8px;
-}
-
-.a-table-cell {
-  padding: 16px 8px;
-}
-
-.a-table {
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-}
-
-.a-table-header {
-  background-color: var(--header-bgcolor);
-  font-weight: bold;
-}
-
-.a-table-row:hover {
-  background-color: #f5f5f5;
-}
-
-.a-button {
-  min-width: 32px;
-  padding: 0 8px;
-}
-
-.a-button-icon-only {
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 </style>

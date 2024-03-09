@@ -16,10 +16,11 @@
                   {{ question.judgeConfig.memoryLimit ?? 0 }}KB
                 </a-descriptions-item>
                 <a-descriptions-item label="堆栈限制">
-                  {{ question.judgeConfig.stackLimit ?? 0 }}ms
+                  {{ question.judgeConfig.stackLimit ?? 0 }}KB
                 </a-descriptions-item>
               </a-descriptions>
-              <MdViewer :value="question.content || ''" />
+<!--              <MdViewer :value="question.content || ''" />-->
+              <MdViewerV3 :modelValue="question.content || ''" />
               <template #extra>
                 <a-space wrap>
                   <a-tag
@@ -156,6 +157,7 @@ import {
   QuestionSubmitVO,
   QuestionVO,
 } from "../../../generated";
+import MdViewerV3 from "@/components/MdViewerV3.vue";
 
 const question = ref<QuestionVO>();
 const record = ref<TableData[]>();

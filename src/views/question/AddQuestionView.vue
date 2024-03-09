@@ -8,11 +8,17 @@
       <a-form-item field="tags" label="标签">
         <a-input-tag v-model="form.tags" placeholder="请选择标签" allow-clear />
       </a-form-item>
+<!--      <a-form-item field="content" label="题目内容">-->
+<!--        <MdEditor :value="form.content" :handle-change="onContentChange" />-->
+<!--      </a-form-item>-->
       <a-form-item field="content" label="题目内容">
-        <MdEditor :value="form.content" :handle-change="onContentChange" />
+        <MdEditorV3 v-model="form.content" :handle-change="onContentChange" />
       </a-form-item>
+<!--      <a-form-item field="answer" label="答案">-->
+<!--        <MdEditor :value="form.answer" :handle-change="onAnswerChange" />-->
+<!--      </a-form-item>-->
       <a-form-item field="answer" label="答案">
-        <MdEditor :value="form.answer" :handle-change="onAnswerChange" />
+        <MdEditorV3 v-model="form.answer" :handle-change="onAnswerChange" />
       </a-form-item>
       <a-form-item label="判题配置" :content-flex="false" :merge-props="false">
         <a-space direction="vertical" style="min-width: 480px">
@@ -103,7 +109,6 @@
           >清除草稿
         </a-button>
       </a-form-item>
-
       <div style="margin-top: 16px" />
       <a-form-item>
         <a-button type="primary" style="min-width: 200px" @click="doSubmit"
@@ -124,6 +129,7 @@ import { QuestionControllerService } from "../../../generated";
 import * as XLSX from "xlsx";
 import { watch } from 'vue';
 import {Modal} from "@arco-design/web-vue";
+import MdEditorV3 from "@/components/MdEditorV3.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -377,7 +383,7 @@ const onAnswerChange = (value: string) => {
 
 <style scoped>
 #addQuestionView {
-  max-width: 800px;
+  max-width: 1440px;
   margin: 0 auto;
   padding: 20px;
 }

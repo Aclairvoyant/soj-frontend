@@ -6,27 +6,6 @@
       </div>
       <div class="main">
         <a-scrollbar style="height: calc(100vh - 120px); overflow: auto">
-          <!--          <div class="info">-->
-          <!--            <a-row>-->
-          <!--              <a-col :span="6" :offset="6">-->
-          <!--                <div class="recordInfo">-->
-          <!--                  <div-->
-          <!--                    class="suc center"-->
-          <!--                    v-if="props.recordContent.judgeInfo?.result === '成功'"-->
-          <!--                  >-->
-          <!--                    <icon-check-circle :style="{ fontSize: '24px' }" />-->
-          <!--                    <span class="recordInfoText"> 成功 </span>-->
-          <!--                  </div>-->
-          <!--                  <div class="err center" v-else>-->
-          <!--                    <icon-close-circle :style="{ fontSize: '24px' }" />-->
-          <!--                    <span class="recordInfoText">-->
-          <!--                      {{ props.recordContent.judgeInfo }}-->
-          <!--                    </span>-->
-          <!--                  </div>-->
-          <!--                </div>-->
-          <!--              </a-col>-->
-          <!--            </a-row>-->
-          <!--          </div>-->
           <div class="message">
             <p class="label" style="font-size: 20px">判题信息</p>
             <a-alert
@@ -45,7 +24,7 @@
             <p class="label" v-if="props.recordContent.status === 2">
               运行内存：
               <a-tag color="arcoblue" bordered size="small">
-                {{ props.recordContent.judgeInfo.memory }}MB
+                {{ props.recordContent.judgeInfo.memory }}KB
               </a-tag>
             </p>
             <p class="label" v-if="props.recordContent.status === 2">
@@ -57,7 +36,7 @@
           </div>
           <div class="code">
             <p class="label">输入代码：</p>
-            <MdViewer :value="codeContent" />
+            <MdViewerV3 :modelValue="codeContent" />
           </div>
         </a-scrollbar>
       </div>
@@ -66,7 +45,6 @@
 </template>
 
 <script setup lang="ts">
-import MdViewer from "@/components/MdViewer.vue";
 import {
   ref,
   watchEffect,
@@ -77,6 +55,7 @@ import {
 } from "vue";
 import { useStore } from "vuex";
 import {QuestionSubmitVO} from "../../generated";
+import MdViewerV3 from "@/components/MdViewerV3.vue";
 
 interface Props {
   recordContent: QuestionSubmitVO;

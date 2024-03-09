@@ -2,48 +2,28 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Question } from '../models/Question';
+import type { BaseResponse_boolean_ } from '../models/BaseResponse_boolean_';
+import type { BaseResponse_PersonalDataVO_ } from '../models/BaseResponse_PersonalDataVO_';
+import type { BaseResponse_Question_ } from '../models/BaseResponse_Question_';
+import type { BaseResponse_QuestionSubmit_ } from '../models/BaseResponse_QuestionSubmit_';
 import type { QuestionSolve } from '../models/QuestionSolve';
-import type { QuestionSubmit } from '../models/QuestionSubmit';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class QuestionInnerControllerService {
-    /**
-     * getQuestionById
-     * @param questionId questionId
-     * @returns Question OK
-     * @throws ApiError
-     */
-    public static getQuestionByIdUsingGet1(
-        questionId: number,
-    ): CancelablePromise<Question> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/inner/get/id',
-            query: {
-                'questionId': questionId,
-            },
-            errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-            },
-        });
-    }
+export class QuestionSolveControllerService {
     /**
      * createQuestionSolve
      * @param questionSolve questionSolve
-     * @returns boolean OK
+     * @returns BaseResponse_boolean_ OK
      * @returns any Created
      * @throws ApiError
      */
     public static createQuestionSolveUsingPost(
         questionSolve: QuestionSolve,
-    ): CancelablePromise<boolean | any> {
+    ): CancelablePromise<BaseResponse_boolean_ | any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/inner/question_submit/createQuestionSolve',
+            url: '/api/question_solve/createQuestionSolve',
             body: questionSolve,
             errors: {
                 401: `Unauthorized`,
@@ -53,17 +33,17 @@ export class QuestionInnerControllerService {
         });
     }
     /**
-     * getQuestionSubmitById
+     * getQuestionById
      * @param questionId questionId
-     * @returns QuestionSubmit OK
+     * @returns BaseResponse_Question_ OK
      * @throws ApiError
      */
-    public static getQuestionSubmitByIdUsingGet(
-        questionId: number,
-    ): CancelablePromise<QuestionSubmit> {
+    public static getQuestionByIdUsingGet1(
+        questionId?: number,
+    ): CancelablePromise<BaseResponse_Question_> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/inner/question_submit/get/id',
+            url: '/api/question_solve/get/id',
             query: {
                 'questionId': questionId,
             },
@@ -75,19 +55,36 @@ export class QuestionInnerControllerService {
         });
     }
     /**
-     * updateQuestionSubmitById
-     * @param questionSubmit questionSubmit
-     * @returns boolean OK
-     * @returns any Created
+     * getPersonalData
+     * @returns BaseResponse_PersonalDataVO_ OK
      * @throws ApiError
      */
-    public static updateQuestionSubmitByIdUsingPost(
-        questionSubmit: QuestionSubmit,
-    ): CancelablePromise<boolean | any> {
+    public static getPersonalDataUsingGet(): CancelablePromise<BaseResponse_PersonalDataVO_> {
         return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/inner/question_submit/update',
-            body: questionSubmit,
+            method: 'GET',
+            url: '/api/question_solve/getPersonalData',
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * getQuestionSubmitById
+     * @param questionSubmitId questionSubmitId
+     * @returns BaseResponse_QuestionSubmit_ OK
+     * @throws ApiError
+     */
+    public static getQuestionSubmitByIdUsingGet(
+        questionSubmitId?: number,
+    ): CancelablePromise<BaseResponse_QuestionSubmit_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/question_solve/question_submit/get/id',
+            query: {
+                'questionSubmitId': questionSubmitId,
+            },
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,
@@ -98,16 +95,16 @@ export class QuestionInnerControllerService {
     /**
      * updateQuestionById
      * @param questionId questionId
-     * @returns boolean OK
+     * @returns BaseResponse_boolean_ OK
      * @returns any Created
      * @throws ApiError
      */
     public static updateQuestionByIdUsingPost(
-        questionId: number,
-    ): CancelablePromise<boolean | any> {
+        questionId?: number,
+    ): CancelablePromise<BaseResponse_boolean_ | any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/inner/question_submit/updateAccepted',
+            url: '/api/question_solve/question_submit/updateAccepted',
             query: {
                 'questionId': questionId,
             },

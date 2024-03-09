@@ -2,7 +2,7 @@
   <a-grid :cols="24" :row-gap="16" class="panel">
     <a-grid-item
       class="panel-col"
-      :span="{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 6 }"
+      :span="{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 }"
     >
       <a-space>
         <a-avatar :size="54" class="col-avatar">
@@ -34,67 +34,66 @@
         </a-avatar>
         <a-statistic
           title="已解决题目数"
-          :value="questionSolveCount"
-          :value-from="0"
+          :value=questionSolveCount
           animation
           show-group-separator
         >
           <template #suffix>
-            <span class="unit">个</span>
+            <span class="unit">道</span>
           </template>
         </a-statistic>
       </a-space>
     </a-grid-item>
-    <!--    <a-grid-item-->
-    <!--      class="panel-col"-->
-    <!--      :span="{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 6 }"-->
-    <!--    >-->
-    <!--      <a-space>-->
-    <!--        <a-avatar :size="54" class="col-avatar">-->
-    <!--          <img-->
-    <!--            alt="avatar"-->
-    <!--            src="//p3-armor.byteimg.com/tos-cn-i-49unhts6dw/77d74c9a245adeae1ec7fb5d4539738d.svg~tplv-49unhts6dw-image.image"-->
-    <!--          />-->
-    <!--        </a-avatar>-->
-    <!--        <a-statistic-->
-    <!--          title="日新增评论"-->
-    <!--          :value="8874"-->
-    <!--          :value-from="0"-->
-    <!--          animation-->
-    <!--          show-group-separator-->
-    <!--        >-->
-    <!--          <template #suffix>-->
-    <!--            <span class="unit">个</span>-->
-    <!--          </template>-->
-    <!--        </a-statistic>-->
-    <!--      </a-space>-->
-    <!--    </a-grid-item>-->
-    <!--    <a-grid-item-->
-    <!--      class="panel-col"-->
-    <!--      :span="{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 6 }"-->
-    <!--      style="border-right: none"-->
-    <!--    >-->
-    <!--      <a-space>-->
-    <!--        <a-avatar :size="54" class="col-avatar">-->
-    <!--          <img-->
-    <!--            alt="avatar"-->
-    <!--            src="//p3-armor.byteimg.com/tos-cn-i-49unhts6dw/c8b36e26d2b9bb5dbf9b74dd6d7345af.svg~tplv-49unhts6dw-image.image"-->
-    <!--          />-->
-    <!--        </a-avatar>-->
-    <!--        <a-statistic-->
-    <!--          title="较昨日新增"-->
-    <!--          :value="2.8"-->
-    <!--          :precision="1"-->
-    <!--          :value-from="0"-->
-    <!--          animation-->
-    <!--        >-->
-    <!--          <template #suffix>-->
-    <!--            %-->
-    <!--            <icon-caret-up class="up-icon" />-->
-    <!--          </template>-->
-    <!--        </a-statistic>-->
-    <!--      </a-space>-->
-    <!--    </a-grid-item>-->
+        <a-grid-item
+          class="panel-col"
+          :span="{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 }"
+        >
+          <a-space>
+            <a-avatar :size="54" class="col-avatar">
+              <img
+                alt="avatar"
+                src="//p3-armor.byteimg.com/tos-cn-i-49unhts6dw/77d74c9a245adeae1ec7fb5d4539738d.svg~tplv-49unhts6dw-image.image"
+              />
+            </a-avatar>
+            <a-statistic
+              title="日新增评论"
+              :value="8874"
+              :value-from="0"
+              animation
+              show-group-separator
+            >
+              <template #suffix>
+                <span class="unit">个</span>
+              </template>
+            </a-statistic>
+          </a-space>
+        </a-grid-item>
+        <a-grid-item
+          class="panel-col"
+          :span="{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 6 }"
+          style="border-right: none"
+        >
+          <a-space>
+            <a-avatar :size="54" class="col-avatar">
+              <img
+                alt="avatar"
+                src="//p3-armor.byteimg.com/tos-cn-i-49unhts6dw/c8b36e26d2b9bb5dbf9b74dd6d7345af.svg~tplv-49unhts6dw-image.image"
+              />
+            </a-avatar>
+            <a-statistic
+              title="较昨日新增"
+              :value="2.8"
+              :precision="1"
+              :value-from="0"
+              animation
+            >
+              <template #suffix>
+                %
+                <icon-caret-up class="up-icon" />
+              </template>
+            </a-statistic>
+          </a-space>
+        </a-grid-item>
     <a-grid-item :span="24">
       <a-divider class="panel-border" />
     </a-grid-item>
@@ -104,16 +103,18 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import message from "@arco-design/web-vue/es/message";
-import {QuestionControllerService, QuestionSubmitControllerService} from "../../../../generated";
+import {
+  QuestionSolveControllerService
+} from "../../../../generated";
 
 const commitCount = ref(0);
 const questionSolveCount = ref(0);
 onMounted(async () => {
   try {
     //初始化个人数据
-    const personalData = await QuestionControllerService.getPersonalDataUsingGet()
-    // commitCount.value = parseInt(personalData.data.commitCount);
-    // questionSolveCount.value = parseInt(personalData.data.questionSolveCount);
+    const personalData = await QuestionSolveControllerService.getPersonalDataUsingGet()
+    commitCount.value = parseInt(personalData.data?.commitCount as unknown as string) ?? 0;
+    questionSolveCount.value = parseInt(personalData.data?.questionSolveCount as unknown as string) ?? 0;
   } catch (e) {
     //todo
     message.error("个人数据请求失败");
