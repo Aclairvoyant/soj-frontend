@@ -73,6 +73,7 @@ import moment from "moment";
 
 import store from "@/store";
 import {
+  QuestionControllerService,
   QuestionSubmitControllerService,
   QuestionSubmitQueryRequest,
 } from "../../../../generated";
@@ -116,7 +117,12 @@ const messageList: { [key: string]: Style } = {
 }
 
 const getMessageStyleColor = (message: string): string => {
-  return messageList[message].color;
+  // 检查 message 是否存在于 messageList 中
+  if (message in messageList) {
+    return messageList[message].color;
+  } else {
+    return "#9E9E9E";
+  }
 };
 
 const getTagStyleColor = (tag: string): string => {
@@ -129,7 +135,7 @@ const getTagStyleColor = (tag: string): string => {
 const fetchData = async () => {
   try {
     setLoading(true);
-    const res = await QuestionSubmitControllerService.listQuestionSubmitByPageUsingPost(
+    const res = await QuestionControllerService.listQuestionSubmitByPageUsingPost(
         {
           ...searchParams.value,
           userId: store.state.user?.loginUser?.id,

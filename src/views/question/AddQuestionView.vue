@@ -76,13 +76,13 @@
               style="width: 100%"
             >
               <a-form-item :label="`输入用例-${index + 1}`">
-                <a-input
+                <a-textarea
                   v-model="judgeCaseItem.input"
                   placeholder="请输入测试输入用例"
                 />
               </a-form-item>
               <a-form-item :label="`输出用例-${index + 1}`">
-                <a-input
+                <a-textarea
                   v-model="judgeCaseItem.output"
                   placeholder="请输入测试输出用例"
                 />

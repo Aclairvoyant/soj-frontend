@@ -23,7 +23,7 @@
     </a-grid-item>
     <a-grid-item
       class="panel-col"
-      :span="{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 6 }"
+      :span="{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 }"
     >
       <a-space>
         <a-avatar :size="54" class="col-avatar">
@@ -104,7 +104,7 @@
 import { onMounted, ref } from "vue";
 import message from "@arco-design/web-vue/es/message";
 import {
-  QuestionSolveControllerService
+  QuestionSolveControllerService, UserControllerService
 } from "../../../../generated";
 
 const commitCount = ref(0);
@@ -112,11 +112,10 @@ const questionSolveCount = ref(0);
 onMounted(async () => {
   try {
     //初始化个人数据
-    const personalData = await QuestionSolveControllerService.getPersonalDataUsingGet()
+    const personalData = await UserControllerService.getPersonalDataUsingGet1()
     commitCount.value = parseInt(personalData.data?.commitCount as unknown as string) ?? 0;
     questionSolveCount.value = parseInt(personalData.data?.questionSolveCount as unknown as string) ?? 0;
   } catch (e) {
-    //todo
     message.error("个人数据请求失败");
   }
 });

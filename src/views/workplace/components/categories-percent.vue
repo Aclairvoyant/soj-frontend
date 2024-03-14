@@ -18,7 +18,7 @@ import useLoading from "@/hooks/loading";
 import useChartOption from "@/hooks/chart-option";
 import ChartComponents from "@/components/ChartComponents.vue";
 import { onMounted, ref } from "vue";
-import {QuestionSolveControllerService} from "../../../../generated";
+import {QuestionSolveControllerService, UserControllerService} from "../../../../generated";
 
 const { loading } = useLoading();
 const questionUnSolveCount = ref(0);
@@ -26,7 +26,7 @@ const questionSolveCount = ref(0);
 const questionCount = ref(0);
 onMounted(async () => {
   try {
-    const personalData = await QuestionSolveControllerService.getPersonalDataUsingGet()
+    const personalData = await UserControllerService.getPersonalDataUsingGet1()
     questionCount.value = personalData.data?.questionCount ?? 0;
     questionSolveCount.value = personalData.data?.questionSolveCount ?? 0;
     questionUnSolveCount.value = questionCount.value - questionSolveCount.value;
@@ -106,7 +106,7 @@ const { chartOption } = useChartOption((isDark) => {
           },
           {
             value: [questionUnSolveCount.value],
-            name: "提交未通过题目",
+            name: "未通过题目",
             itemStyle: {
               color: isDark ? "#A079DC" : "#313CA9",
             },

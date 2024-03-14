@@ -13,7 +13,8 @@
         size="large"
         column="1"
         bordered
-      />
+      >
+      </a-descriptions>
       <template #extra>
         <a-link @click="openEditDrawer">修改用户信息</a-link>
       </template>
@@ -112,38 +113,40 @@ import {
   Message,
   RequestOption,
 } from "@arco-design/web-vue";
+import moment from "moment/moment";
 
 const store = useStore();
 const loginUser: LoginUserVO = computed(
   () => store.state.user?.loginUser
 ) as LoginUserVO;
 
-const data = [
+const data = ref([
   {
     label: "用户名称",
     value: store.state.user?.loginUser.userName,
   },
   {
     label: "用户角色",
-    value: store.state.user?.loginUser.userRole,
+    value: store.state.user?.loginUser.userRole === "admin" ? "管理员" : "普通用户",
   },
   {
     label: "用户简介",
     value:
-      store.state.user?.loginUser.userProfile &&
-      store.state.user?.loginUser.userProfile !== ""
-        ? store.state.user?.loginUser.userProfile
-        : "暂无简介",
+        store.state.user?.loginUser.userProfile &&
+        store.state.user?.loginUser.userProfile !== ""
+            ? store.state.user?.loginUser.userProfile
+            : "暂无简介",
   },
   {
     label: "创建时间",
-    value: store.state.user?.loginUser.createTime,
+    value: moment(store.state.user?.loginUser.createTime).format("YYYY-MM-DD HH:mm:ss"),
   },
   {
     label: "上次修改时间",
-    value: store.state.user?.loginUser.updateTime,
+    value: moment(store.state.user?.loginUser.updateTime).format("YYYY-MM-DD HH:mm:ss"),
   },
-] as DescData[];
+]);
+
 const visible = ref(false);
 const updateForm = ref<UserUpdateMyRequest>({
   ...store.state.user?.loginUser,

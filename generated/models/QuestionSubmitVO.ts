@@ -14,6 +14,7 @@ export type QuestionSubmitVO = {
     questionId?: number;
     questionVO?: QuestionVO;
     status?: number;
+    tags?: Array<string>;
     updateTime?: string;
     userId?: number;
     userVO?: UserVO;

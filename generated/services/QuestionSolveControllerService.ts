@@ -12,13 +12,14 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class QuestionSolveControllerService {
     /**
+     * @deprecated
      * createQuestionSolve
      * @param questionSolve questionSolve
      * @returns BaseResponse_boolean_ OK
      * @returns any Created
      * @throws ApiError
      */
-    public static createQuestionSolveUsingPost(
+    public static createQuestionSolveUsingPost1(
         questionSolve: QuestionSolve,
     ): CancelablePromise<BaseResponse_boolean_ | any> {
         return __request(OpenAPI, {
@@ -33,12 +34,13 @@ export class QuestionSolveControllerService {
         });
     }
     /**
+     * @deprecated
      * getQuestionById
      * @param questionId questionId
      * @returns BaseResponse_Question_ OK
      * @throws ApiError
      */
-    public static getQuestionByIdUsingGet1(
+    public static getQuestionByIdUsingGet2(
         questionId?: number,
     ): CancelablePromise<BaseResponse_Question_> {
         return __request(OpenAPI, {
@@ -55,6 +57,7 @@ export class QuestionSolveControllerService {
         });
     }
     /**
+     * @deprecated
      * getPersonalData
      * @returns BaseResponse_PersonalDataVO_ OK
      * @throws ApiError
@@ -71,12 +74,13 @@ export class QuestionSolveControllerService {
         });
     }
     /**
+     * @deprecated
      * getQuestionSubmitById
      * @param questionSubmitId questionSubmitId
      * @returns BaseResponse_QuestionSubmit_ OK
      * @throws ApiError
      */
-    public static getQuestionSubmitByIdUsingGet(
+    public static getQuestionSubmitByIdUsingGet1(
         questionSubmitId?: number,
     ): CancelablePromise<BaseResponse_QuestionSubmit_> {
         return __request(OpenAPI, {
@@ -93,13 +97,14 @@ export class QuestionSolveControllerService {
         });
     }
     /**
+     * @deprecated
      * updateQuestionById
      * @param questionId questionId
      * @returns BaseResponse_boolean_ OK
      * @returns any Created
      * @throws ApiError
      */
-    public static updateQuestionByIdUsingPost(
+    public static updateQuestionByIdUsingPost1(
         questionId?: number,
     ): CancelablePromise<BaseResponse_boolean_ | any> {
         return __request(OpenAPI, {

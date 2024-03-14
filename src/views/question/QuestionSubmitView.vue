@@ -37,13 +37,21 @@
       @page-change="onPageChange"
       @pageSizeChange="onPageSizeChange"
     >
+      <template #questionTitle="{ record }">
+        <a
+            @click="toQuestionPage(record.questionVO)"
+            style="cursor: pointer;">
+          {{ record.questionVO.title }}
+        </a>
+      </template>
+
       <template #judgeInfo="{ record }">
         <a-tag :color="getMessageStyleColor(record.judgeInfo.message)">
           {{ record.judgeInfo.message }}
         </a-tag>
       </template>
       <template #createTime="{ record }">
-        {{ moment(record.createTime).format("YYYY-MM-DD hh:mm:ss") }}
+        {{ moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}
       </template>
       <template #status="{ record }">
         <a-tag v-if="record.status === 1" loading>判题中</a-tag>
@@ -61,20 +69,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import {onMounted, onUnmounted, ref, watchEffect} from "vue";
 
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import moment from "moment";
 import {
-  Question,
-  QuestionSubmitControllerService
+  Question, QuestionControllerService
 } from "../../../generated";
 
 const tableRef = ref();
 
 const dataList = ref([]);
 const total = ref(0);
+const refreshInterval = 3000; // 3秒
+let intervalId: number;
+
 const searchParams = ref({
   title: "",
   language: "",
@@ -103,11 +113,16 @@ const messageList: { [key: string]: Style } = {
 }
 
 const getMessageStyleColor = (message: string): string => {
-  return messageList[message].color;
+  // 检查 message 是否存在于 messageList 中
+  if (message in messageList) {
+    return messageList[message].color;
+  } else {
+    return "#9E9E9E";
+  }
 };
 
 const loadData = async () => {
-  const res = await QuestionSubmitControllerService.listQuestionSubmitByPageUsingPost(
+  const res = await QuestionControllerService.listQuestionSubmitByPageUsingPost(
     {
       ...searchParams.value,
       sortField: "createTime",
@@ -129,6 +144,21 @@ watchEffect(() => {
   loadData();
 });
 
+onMounted(() => {
+  loadData(); // 首次挂载时加载数据
+
+  // 设置定时器，定期刷新数据
+  intervalId = setInterval(() => {
+    loadData();
+  }, refreshInterval) as unknown as number;
+});
+
+onUnmounted(() => {
+  // 组件销毁时清除定时器
+  clearInterval(intervalId);
+});
+
+
 
 const columns = [
   {
@@ -149,7 +179,7 @@ const columns = [
   },
   {
     title: "题目名称",
-    dataIndex: "questionVO.title",
+    slotName: "questionTitle",
   },
   {
     title: "提交者",

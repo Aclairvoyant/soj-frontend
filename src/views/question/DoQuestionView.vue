@@ -40,7 +40,7 @@
           <a-tab-pane key="record" title="提交记录">
             <a-table :data="record" :pagination="false" :bordered="false">
               <template #columns>
-                <a-table-column title="标签" data-index="language">
+                <a-table-column title="语言" data-index="language">
                   <template #cell="{ record }">
                     <a-typography-paragraph
                       :ellipsis="{
@@ -55,7 +55,7 @@
                 </a-table-column>
                 <a-table-column title="判题结果">
                   <template #cell="{ record }">
-                    <a-tag :color="record.status === 2 ? '#00b42a' : '#f53f3f'">
+                    <a-tag :color = getMessageStyleColor(record.judgeInfo.message)>
                       {{ record.judgeInfo.message }}
                     </a-tag>
                   </template>
@@ -125,10 +125,37 @@
           :handle-change="changeCode"
           code-default="aaaa"
         />
+
         <a-divider size="0" />
-        <a-button type="primary" style="min-width: 200px" @click="doSubmit">
-          提交代码
-        </a-button>
+
+        <a-collapse expand-icon-position="right" bordered="false">
+          <a-divider size="0" />
+          <a-space>
+            <a-button type="primary" style="min-width: 200px; margin-left: 20px" @click="runSelfTest">
+              运行自测
+            </a-button>
+            <a-button type="primary" style="min-width: 200px" @click="doSubmit">
+              提交代码
+            </a-button>
+          </a-space>
+          <a-collapse-item>
+              <a-form model="selfTestForm">
+                <a-form-item label="测试输入">
+                  <a-textarea v-model="selfTestForm.input" placeholder="请输入测试用例的输入" />
+                </a-form-item>
+                <a-form-item label="预期输出">
+                  <a-textarea v-model="selfTestForm.expectedOutput" placeholder="请输入测试用例的预期输出" />
+                </a-form-item>
+                <!-- 新增显示测试结果的文本区域 -->
+                <a-form-item label="测试结果">
+                  <a-textarea v-model="testResult" placeholder="测试结果会显示在这里" readonly />
+                </a-form-item>
+              </a-form>
+          </a-collapse-item>
+        </a-collapse>
+
+
+
       </a-col>
       <a-col :md="12" :xs="24" v-if="!isShowDetails">
         <RecordDetail
@@ -173,6 +200,70 @@ const closeRecord = () => {
   isShowDetails.value = !isShowDetails.value;
 };
 
+type Style = {
+  text: string;
+  color: string;
+};
+
+const messageList: { [key: string]: Style } = {
+  // 执行结果
+  "Accepted": {text: "成功", color: "#4CAF50"}, // 绿色
+  "Wrong Answer": {text: "答案错误", color: "#f44336"}, // 红色
+  "Runtime Error": {text: "运行时错误", color: "#FF9800"}, // 橙色
+  "Time Limit Exceeded": {text: "超时", color: "#3F51B5"}, // 深蓝色
+  "Memory Limit Exceeded": {text: "超内存", color: "#9C27B0"}, // 紫色
+  "Output Limit Exceeded": {text: "输出超限", color: "#00BCD4"}, // 青色
+  "Compile Error": {text: "编译错误", color: "#E91E63"}, // 粉红色
+  "System Error": {text: "系统错误", color: "#9E9E9E"}, // 灰色
+  "Unknown Error": {text: "未知错误", color: "#607D8B"}, // 蓝灰色
+  "Pending": {text: "等待中", color: "#FFEB3B"}, // 黄色
+  "Dangerous Operation": {text: "危险操作", color: "#673AB7"} // 深紫色
+}
+
+const getMessageStyleColor = (message: string): string => {
+  // 检查 message 是否存在于 messageList 中
+  if (message in messageList) {
+    return messageList[message].color;
+  } else {
+    return "#9E9E9E";
+  }
+};
+
+
+const selfTestForm = ref({
+  input: '',
+  expectedOutput: '',
+});
+
+const testResult = ref(''); // 用于存储测试结果
+
+const runSelfTest = async () => {
+
+  const res = await QuestionControllerService.runQuestionSubmitUsingPost({
+    code: form.value.code,
+    input: selfTestForm.value.input,
+    language: form.value.language,
+  });
+  if (res.code === 200) {
+    record.value = res.data.records;
+  } else {
+    message.error("加载失败，" + res.message);
+  }
+
+  const output = JSON.parse(res.data?.output);
+  const expectedOutput = selfTestForm.value.expectedOutput;
+
+  if (output == expectedOutput) {
+    message.success("测试通过");
+    // testResult.value = output;
+  } else {
+    message.info(res.data.message);
+  }
+
+  testResult.value = output;
+}
+
+
 /**
  * 当tabs标签变化时
  * @param key
@@ -180,7 +271,7 @@ const closeRecord = () => {
 const tabChanges = async (key: string) => {
   if (key === "record") {
     const res =
-      await QuestionSubmitControllerService.listQuestionSubmitByPageUsingPost({
+      await QuestionControllerService.listQuestionSubmitByPageUsingPost({
         userId: store.state.user?.loginUser?.id,
         questionId: question.value?.id,
         sortField: "createTime",
@@ -240,7 +331,7 @@ const doSubmit = async () => {
     return;
   }
 
-  const res = await QuestionSubmitControllerService.doQuestionSubmitUsingPost({
+  const res = await QuestionControllerService.doQuestionSubmitUsingPost({
     ...form.value,
     questionId: question.value.id,
   });
