@@ -239,6 +239,11 @@ const testResult = ref(''); // 用于存储测试结果
 
 const runSelfTest = async () => {
 
+  if (selfTestForm.value.input === '' && selfTestForm.value.expectedOutput === '') {
+    message.warning('请输入测试用例');
+    return;
+  }
+
   const res = await QuestionControllerService.runQuestionSubmitUsingPost({
     code: form.value.code,
     input: selfTestForm.value.input,
@@ -308,15 +313,15 @@ const loadData = async () => {
 
 const form = ref<QuestionSubmitAddRequest>({
   language: "java",
-  code:
-    "import java.io.*;\n" +
-    "import java.util.*;\n" +
-    "public class Main{\n" +
-    "    public static void main(String[] args){\n" +
-    "        Scanner sc = new Scanner(System.in);\n" +
-    "        // 请输入你的代码 \n" +
-    "    }\n" +
-    "}",
+  code: "",
+    // "import java.io.*;\n" +
+    // "import java.util.*;\n" +
+    // "public class Main{\n" +
+    // "    public static void main(String[] args){\n" +
+    // "        Scanner sc = new Scanner(System.in);\n" +
+    // "        // 请输入你的代码 \n" +
+    // "    }\n" +
+    // "}",
 });
 
 const showDetails = (record: any) => {

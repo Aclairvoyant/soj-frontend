@@ -181,7 +181,7 @@ export class QuestionControllerService {
      * @returns BaseResponse_List_Question_ OK
      * @throws ApiError
      */
-    public static getAllUsingGet1(): CancelablePromise<BaseResponse_List_Question_> {
+    public static getAllUsingGet2(): CancelablePromise<BaseResponse_List_Question_> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/question/getAll',
@@ -198,7 +198,7 @@ export class QuestionControllerService {
      * @returns BaseResponse_List_Question_ OK
      * @throws ApiError
      */
-    public static getByTitleOrContentUsingGet1(
+    public static getByTitleOrContentUsingGet2(
         titleOrContent?: string,
     ): CancelablePromise<BaseResponse_List_Question_> {
         return __request(OpenAPI, {
