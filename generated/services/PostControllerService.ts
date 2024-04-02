@@ -106,7 +106,7 @@ export class PostControllerService {
      * @returns BaseResponse_List_Post_ OK
      * @throws ApiError
      */
-    public static getAllUsingGet1(): CancelablePromise<BaseResponse_List_Post_> {
+    public static getAllUsingGet(): CancelablePromise<BaseResponse_List_Post_> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/post/getAll',

@@ -80,11 +80,11 @@ export class AnnouncementControllerService {
         });
     }
     /**
-     * getAll
+     * getAllVisible
      * @returns BaseResponse_List_Announcement_ OK
      * @throws ApiError
      */
-    public static getAllUsingGet(): CancelablePromise<BaseResponse_List_Announcement_> {
+    public static getAllVisibleUsingGet(): CancelablePromise<BaseResponse_List_Announcement_> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/announcement/getAll',

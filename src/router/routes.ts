@@ -1,7 +1,5 @@
 import {RouteRecordRaw} from "vue-router";
 import HomeView from "@/views/home/HomeView.vue";
-import AdminView from "@/views/AdminView.vue";
-import NoAuthView from "@/views/NoAuthView.vue";
 import AccessEnum from "@/access/accessEnum";
 import UserLoginIndex from "@/views/user/UserLoginIndex.vue";
 import AddQuestionView from "@/views/question/AddQuestionView.vue";
@@ -9,9 +7,12 @@ import QuestionsView from "@/views/question/QuestionsView.vue";
 import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
 import accessEnum from "@/access/accessEnum";
 import DoQuestionView from "@/views/question/DoQuestionView.vue";
-import AboutView from "@/views/AboutView.vue";
 import Workplace from "@/views/workplace/index.vue";
 import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
+import AddAnnouncementView from "@/views/announcement/AddAnnouncementView.vue";
+import ManageAnnouncementView from "@/views/announcement/ManageAnnouncementView.vue";
+import PostDetail from "@/components/PostDetail.vue";
+import CarouselView from "@/views/home/CarouselView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
     {
@@ -79,11 +80,53 @@ export const routes: Array<RouteRecordRaw> = [
         component: QuestionSubmitView,
     },
     {
+        path: "/add/announcement",
+        name: "添加公告",
+        component: AddAnnouncementView,
+        meta: {
+            access: accessEnum.ADMIN
+        }
+    },
+    {
+        path: "/manage/announcement/",
+        name: "管理公告",
+        component: ManageAnnouncementView,
+        meta: {
+            access: accessEnum.ADMIN
+        }
+    },
+    {
+        path: "/update/announcement",
+        name: "更新公告",
+        component: AddAnnouncementView,
+        meta: {
+            access: accessEnum.ADMIN,
+            hideInMenu: true
+        },
+    },
+    {
         path: "/workplace",
         name: "个人数据总览",
         component: Workplace,
         meta: {
             access: accessEnum.USER,
+        }
+    },
+    {
+        path: "/post/:postId",
+        name: "PostDetail",
+        props: true,
+        component: PostDetail,
+        meta: {
+            hideInMenu: true
+        }
+    },
+    {
+        path: "/:pathMatch(.*)*",
+        name: "404",
+        redirect: {name: "首页"},
+        meta: {
+            hideInMenu: true
         }
     },
 ];

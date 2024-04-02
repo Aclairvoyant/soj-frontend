@@ -1,17 +1,17 @@
 <template>
   <div id="homeView">
-    <a-row :gutter="24">
+    <a-row gutter="24">
       <a-col :span="18">
+        <CarouselView />
         <a-space direction="vertical" size="large">
-          <CarouselView />
-          <PostView />
         </a-space>
+        <PostView />
       </a-col>
 
       <a-col :span="6">
         <a-space direction="vertical" size="large">
           <AnnouncementView />
-          <a-calendar v-model="value" />
+          <a-calendar v-model="value" mode="month"/>
           <div>select: {{ value }}</div>
         </a-space>
       </a-col>
@@ -34,5 +34,9 @@ const value = ref(new Date());
 #homeView {
   max-width: 1440px;
   margin: 0 auto;
+}
+
+.post-view {
+  height: 100%;
 }
 </style>

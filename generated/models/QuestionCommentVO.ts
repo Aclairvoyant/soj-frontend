@@ -2,15 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { UserVO } from './UserVO';
-export type AnnouncementVO = {
+export type QuestionCommentVO = {
     content?: string;
     createTime?: string;
     id?: number;
-    status?: number;
-    title?: string;
+    questionId?: number;
     updateTime?: string;
-    user?: UserVO;
-    userId?: number;
+    userAvatar?: string;
+    userName?: string;
 };
 

@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { BaseResponse_boolean_ } from '../models/BaseResponse_boolean_';
 import type { BaseResponse_List_Question_ } from '../models/BaseResponse_List_Question_';
+import type { BaseResponse_List_QuestionCommentVO_ } from '../models/BaseResponse_List_QuestionCommentVO_';
 import type { BaseResponse_long_ } from '../models/BaseResponse_long_';
 import type { BaseResponse_Page_Question_ } from '../models/BaseResponse_Page_Question_';
 import type { BaseResponse_Page_QuestionSubmitVO_ } from '../models/BaseResponse_Page_QuestionSubmitVO_';
@@ -15,6 +16,7 @@ import type { BaseResponse_QuestionVO_ } from '../models/BaseResponse_QuestionVO
 import type { BaseResponse_string_ } from '../models/BaseResponse_string_';
 import type { DeleteRequest } from '../models/DeleteRequest';
 import type { QuestionAddRequest } from '../models/QuestionAddRequest';
+import type { QuestionCommentAddRequest } from '../models/QuestionCommentAddRequest';
 import type { QuestionEditRequest } from '../models/QuestionEditRequest';
 import type { QuestionQueryRequest } from '../models/QuestionQueryRequest';
 import type { QuestionRunRequest } from '../models/QuestionRunRequest';
@@ -40,6 +42,27 @@ export class QuestionControllerService {
             method: 'POST',
             url: '/api/question/add',
             body: questionAddRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * addQuestionComment
+     * @param questionCommentAddRequest questionCommentAddRequest
+     * @returns BaseResponse_long_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static addQuestionCommentUsingPost(
+        questionCommentAddRequest: QuestionCommentAddRequest,
+    ): CancelablePromise<BaseResponse_long_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/question/addQuestionComment',
+            body: questionCommentAddRequest,
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,
@@ -181,7 +204,7 @@ export class QuestionControllerService {
      * @returns BaseResponse_List_Question_ OK
      * @throws ApiError
      */
-    public static getAllUsingGet2(): CancelablePromise<BaseResponse_List_Question_> {
+    public static getAllUsingGet1(): CancelablePromise<BaseResponse_List_Question_> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/question/getAll',
@@ -226,6 +249,28 @@ export class QuestionControllerService {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/question/getQuestionAnswer',
+            query: {
+                'questionId': questionId,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * getQuestionComment
+     * @param questionId questionId
+     * @returns BaseResponse_List_QuestionCommentVO_ OK
+     * @throws ApiError
+     */
+    public static getQuestionCommentUsingGet(
+        questionId?: number,
+    ): CancelablePromise<BaseResponse_List_QuestionCommentVO_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/question/getQuestionComment',
             query: {
                 'questionId': questionId,
             },

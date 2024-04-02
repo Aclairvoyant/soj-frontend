@@ -33,7 +33,9 @@
               </template>
             </a-card>
           </a-tab-pane>
-          <a-tab-pane key="comment" title="评论" disabled>评论区</a-tab-pane>
+          <a-tab-pane key="comment" title="评论">
+            <QuestionComment v-if="question && question.id" :questionId="question.id" />
+          </a-tab-pane>
           <a-tab-pane key="answer" title="答案">
             <CodeViewer :value="answer" />
           </a-tab-pane>
@@ -185,6 +187,7 @@ import {
   QuestionVO,
 } from "../../../generated";
 import MdViewerV3 from "@/components/MdViewerV3.vue";
+import QuestionComment from "@/components/QuestionComment.vue";
 
 const question = ref<QuestionVO>();
 const record = ref<TableData[]>();
