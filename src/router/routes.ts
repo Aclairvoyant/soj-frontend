@@ -11,8 +11,7 @@ import Workplace from "@/views/workplace/index.vue";
 import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
 import AddAnnouncementView from "@/views/announcement/AddAnnouncementView.vue";
 import ManageAnnouncementView from "@/views/announcement/ManageAnnouncementView.vue";
-import PostDetail from "@/components/PostDetail.vue";
-import CarouselView from "@/views/home/CarouselView.vue";
+import PostDetailView from "@/views/post/PostDetailView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
     {
@@ -116,7 +115,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: "/post/:postId",
         name: "PostDetail",
         props: true,
-        component: PostDetail,
+        component: PostDetailView,
         meta: {
             hideInMenu: true
         }

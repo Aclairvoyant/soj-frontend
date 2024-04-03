@@ -67,9 +67,9 @@ const codeContent = ref();
 const v1 = "```";
 
 watchEffect(() => {
-  console.log(props.recordContent);
+  // console.log(props.recordContent);
   codeContent.value = `${v1}${props.recordContent.language}\n${props.recordContent.code}`;
-  console.log(codeContent.value);
+  // console.log(codeContent.value);
 });
 
 const store = useStore();

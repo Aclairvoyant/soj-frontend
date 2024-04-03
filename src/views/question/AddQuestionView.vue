@@ -125,7 +125,7 @@ import MdEditor from "@/components/MdEditor.vue";
 import message from "@arco-design/web-vue/es/message";
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";
-import { QuestionControllerService } from "../../../generated";
+import {QuestionControllerService, Service} from "../../../generated";
 import * as XLSX from "xlsx";
 import { watch } from 'vue';
 import {Modal} from "@arco-design/web-vue";
@@ -179,7 +179,7 @@ const loadData = async () => {
   if (!id) {
     return;
   }
-  const res = await QuestionControllerService.getQuestionByIdUsingGet(id as any);
+  const res = await Service.getQuestionByIdUsingGet(id as any);
 
   if (res.code === 200) {
     form.value = res.data as any;
@@ -220,7 +220,7 @@ onMounted(() => {
 const doSubmit = async () => {
   // 区分更新还是创建
   if (updatePage) {
-    const res = await QuestionControllerService.updateQuestionUsingPost(
+    const res = await Service.updateQuestionUsingPost(
       form.value
     );
     if (res.code === 200) {
@@ -235,7 +235,7 @@ const doSubmit = async () => {
       localStorage.removeItem('formDraft');
     }
   } else {
-    const res = await QuestionControllerService.addQuestionUsingPost(
+    const res = await Service.addQuestionUsingPost(
       form.value
     );
     if (res.code === 200) {

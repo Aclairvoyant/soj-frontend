@@ -12,7 +12,7 @@
 import 'md-editor-v3/lib/style.css';
 import {ref} from "vue";
 import {Message} from "@arco-design/web-vue";
-import {FileService} from "../../generated";
+import {FileService, Service} from "../../generated";
 import axios from "axios";
 import { MdEditor } from 'md-editor-v3';
 const value = ref('');
@@ -22,9 +22,9 @@ const handleChange = (v: string) => {
 };
 
 const onUploadImg3 = async (file: File) => {
-  const res = await FileService.uploadUsingPost(file);
+  const res = await Service.uploadUsingPost(file);
   if (res.code === 200) {
-    const imgUrlRes = await FileService.getTempAccessUsingPost(res.data);
+    const imgUrlRes = await Service.getTempAccessUsingPost(res.data);
     console.log(imgUrlRes.data);
   } else {
     Message.error(res.msg);

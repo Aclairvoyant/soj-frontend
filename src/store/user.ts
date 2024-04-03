@@ -1,6 +1,6 @@
 import {StoreOptions} from "vuex";
 import AccessEnum from "@/access/accessEnum";
-import {UserControllerService} from "../../generated";
+import {Service} from "../../generated";
 
 export default {
     namespaced: true,
@@ -15,7 +15,7 @@ export default {
             try {
                 //拿到payload信息，如果没有内容，则远程进行请求数据
                 if (payload === undefined) {
-                    payload = await UserControllerService.getLoginUserUsingGet();
+                    payload = await Service.getLoginUserUsingGet();
                 }
                 // 从远程请求获取登录信息
                 if (payload.code === 200) {

@@ -65,7 +65,7 @@ import * as querystring from "querystring";
 import { useRouter } from "vue-router";
 import moment from "moment";
 import {Modal} from "@arco-design/web-vue";
-import {Question, QuestionControllerService} from "../../../generated";
+import {Question, Service} from "../../../generated";
 
 const tableRef = ref();
 
@@ -80,7 +80,7 @@ const searchParams = ref({
 });
 
 const loadData = async () => {
-  const res = await QuestionControllerService.listQuestionByPageUsingPost(
+  const res = await Service.listQuestionByPageUsingPost(
       searchParams.value
   );
   if (res.code === 200) {
@@ -225,7 +225,7 @@ const doDelete = async (question: Question) => {
     title: '确认',
     content: '确定要删除该题目吗？',
     async onOk() {
-      const res = await QuestionControllerService.deleteQuestionUsingPost({
+      const res = await Service.deleteQuestionUsingPost({
         id: question.id,
       });
       if (res.code === 200) {

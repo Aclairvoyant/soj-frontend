@@ -35,7 +35,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { defineProps } from 'vue';
-import {QuestionCommentVO, QuestionControllerService} from "../../generated";
+import {QuestionCommentVO, Service} from "../../generated";
 import moment from "moment/moment";
 
 const props = defineProps({
@@ -51,7 +51,7 @@ const commentContent = ref();
 
 onMounted(async () => {
   if (props.questionId) {
-    const res = await QuestionControllerService.getQuestionCommentUsingGet(props.questionId);
+    const res = await Service.getQuestionCommentUsingGet(props.questionId);
     if (res.code === 200) {
       comments.value = res.data;
     } else {
@@ -61,7 +61,7 @@ onMounted(async () => {
 });
 
 const loadComments = async () => {
-  const res = await QuestionControllerService.getQuestionCommentUsingGet(props.questionId);
+  const res = await Service.getQuestionCommentUsingGet(props.questionId);
   if (res.code === 200) {
     comments.value = res.data;
   }
@@ -69,7 +69,7 @@ const loadComments = async () => {
 
 const submitComment = async () => {
   if (commentContent.value) {
-    const res = await QuestionControllerService.addQuestionCommentUsingPost({
+    const res = await Service.addQuestionCommentUsingPost({
       questionId: props.questionId,
       content: commentContent.value,
     });

@@ -316,7 +316,7 @@ import {ValidatedError} from "@arco-design/web-vue/es/form/interface";
 import {useStore} from "vuex";
 import useLoading from "@/hooks/loading";
 import message from "@arco-design/web-vue/es/message";
-import {UserControllerService} from "../../../generated";
+import {Service, UserControllerService} from "../../../generated";
 
 const router = useRouter();
 const errorMessage = ref("");
@@ -359,7 +359,7 @@ const handleSubmitForgetPassword = async () => {
       return;
     }
     // 发送请求到后端，处理忘记密码逻辑
-    const res = await UserControllerService.forgetPasswordUsingPost(forgetPasswordForm);
+    const res = await Service.forgetPasswordUsingPost(forgetPasswordForm);
     if (res.code === 200) {
       message.success('密码重置成功');
     }
@@ -484,7 +484,7 @@ const handleSubmit = async ({
     if (!isEmailLogin.value) {
       // 通过账号密码进行登录
       try {
-        res = await UserControllerService.userLoginUsingPost(values);
+        res = await Service.userLoginUsingPost(values);
       } catch (err) {
         //出现异常就return
         message.error("登陆失败，请重试");
@@ -544,7 +544,7 @@ const registerEvent = () => {
             setLoading(true);
             // 表单验证通过
             try {
-              const res = await UserControllerService.userRegisterUsingPost(
+              const res = await Service.userRegisterUsingPost(
                   userInfo
               );
               if (res.code === 200) {

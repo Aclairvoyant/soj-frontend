@@ -54,7 +54,7 @@ import {
   Post,
   PostControllerService,
   PostFavourControllerService,
-  PostThumbControllerService,
+  PostThumbControllerService, Service,
 } from "../../../generated";
 import { useRouter } from "vue-router";
 
@@ -62,7 +62,7 @@ const posts = ref([]);
 
 
 const fetchPostsAndCheckStatus = async () => {
-  const res = await PostControllerService.listPostVoByPageUsingPost({
+  const res = await Service.listPostVoByPageUsingPost({
     current: 1,
     pageSize: 10,
   });
@@ -86,19 +86,19 @@ const fetchPostsAndCheckStatus = async () => {
 };
 
 const checkLike = async (id: any, post: any) => {
-  const res = await PostThumbControllerService.checkThumbUsingPost(id);
+  const res = await Service.checkThumbUsingPost(id);
   // 直接在对应帖子对象上更新状态
   post.liked = res.data;
 };
 
 const checkStar = async (id: any, post: any) => {
-  const res = await PostFavourControllerService.checkFavourUsingPost(id);
+  const res = await Service.checkFavourUsingPost(id);
   // 直接在对应帖子对象上更新状态
   post.starred = res.data;
 };
 
 const onLikeChange = async (id: any) => {
-  await PostThumbControllerService.doThumbUsingPost({
+  await Service.doThumbUsingPost({
     postId: id,
   });
   // 再次检查更新点赞状态
@@ -109,7 +109,7 @@ const onLikeChange = async (id: any) => {
 };
 
 const onStarChange = async (id: any) => {
-  await PostFavourControllerService.doPostFavourUsingPost({
+  await Service.doPostFavourUsingPost({
     postId: id,
   });
   // 再次检查更新收藏状态

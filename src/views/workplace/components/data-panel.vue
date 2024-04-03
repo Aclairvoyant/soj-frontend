@@ -104,7 +104,7 @@
 import { onMounted, ref } from "vue";
 import message from "@arco-design/web-vue/es/message";
 import {
-  QuestionSolveControllerService, UserControllerService
+  QuestionSolveControllerService, Service, UserControllerService
 } from "../../../../generated";
 
 const commitCount = ref(0);
@@ -112,7 +112,7 @@ const questionSolveCount = ref(0);
 onMounted(async () => {
   try {
     //初始化个人数据
-    const personalData = await UserControllerService.getPersonalDataUsingGet1()
+    const personalData = await Service.getPersonalDataUsingGet()
     commitCount.value = parseInt(personalData.data?.commitCount as unknown as string) ?? 0;
     questionSolveCount.value = parseInt(personalData.data?.questionSolveCount as unknown as string) ?? 0;
   } catch (e) {

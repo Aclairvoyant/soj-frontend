@@ -43,7 +43,7 @@ import {onMounted, ref} from "vue";
 import message from "@arco-design/web-vue/es/message";
 import {useRoute} from "vue-router";
 import {useRouter} from "vue-router";
-import {AnnouncementControllerService} from "../../../generated";
+import {AnnouncementControllerService, Service} from "../../../generated";
 import {watch} from "vue";
 import {Modal} from "@arco-design/web-vue";
 import MdEditorV3 from "@/components/MdEditorV3.vue";
@@ -97,7 +97,7 @@ const doSubmit = async () => {
 
   // 区分更新还是创建
   if (updatePage) {
-    const res = await AnnouncementControllerService.updateAnnouncementUsingPost(
+    const res = await Service.updateAnnouncementUsingPost(
         form.value
     );
     if (res.code === 200) {
@@ -112,7 +112,7 @@ const doSubmit = async () => {
       localStorage.removeItem('announcementFormDraft');
     }
   } else {
-    const res = await AnnouncementControllerService.addAnnouncementUsingPost(
+    const res = await Service.addAnnouncementUsingPost(
         form.value
     );
     if (res.code === 200) {

@@ -25,7 +25,7 @@
 
 <script setup>
 import {onMounted, ref} from 'vue';
-import { AnnouncementControllerService } from "../../../generated";
+import {AnnouncementControllerService, Service} from "../../../generated";
 
 const announcements = ref([]);
 const activeIndex = ref(0); // 存储当前激活公告的索引
@@ -33,7 +33,7 @@ const activeAnnouncement = ref(null); // 当前激活的公告详细信息
 
 // 加载数据并初始化激活公告
 onMounted(async () => {
-  const res = await AnnouncementControllerService.getAllVisibleUsingGet();
+  const res = await Service.getAllVisibleUsingGet();
   if (res.code === 200 && res.data.length > 0) {
     announcements.value = res.data;
     // 初始化显示第一个公告的内容

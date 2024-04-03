@@ -78,7 +78,7 @@ import message from "@arco-design/web-vue/es/message";
 import * as querystring from "querystring";
 import { useRouter } from "vue-router";
 import moment from "moment";
-import {Question, QuestionControllerService} from "../../../generated";
+import {Question, Service} from "../../../generated";
 
 const tableRef = ref();
 
@@ -112,7 +112,7 @@ const getTagStyleColor = (tag: string): string => {
 
 
 const loadData = async () => {
-  const res = await QuestionControllerService.listQuestionVoByPageUsingPost(searchParams.value);
+  const res = await Service.listQuestionVoByPageUsingPost(searchParams.value);
   if (res.code === 200) {
     dataList.value = res.data?.records ?? [];
     total.value = res.data?.total ?? 0;

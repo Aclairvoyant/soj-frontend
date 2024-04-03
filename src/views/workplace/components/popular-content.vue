@@ -75,7 +75,7 @@ import store from "@/store";
 import {
   QuestionControllerService,
   QuestionSubmitControllerService,
-  QuestionSubmitQueryRequest,
+  QuestionSubmitQueryRequest, Service,
 } from "../../../../generated";
 import message from "@arco-design/web-vue/es/message";
 
@@ -135,7 +135,7 @@ const getTagStyleColor = (tag: string): string => {
 const fetchData = async () => {
   try {
     setLoading(true);
-    const res = await QuestionControllerService.listQuestionSubmitByPageUsingPost(
+    const res = await Service.listQuestionSubmitByPageUsingPost(
         {
           ...searchParams.value,
           userId: store.state.user?.loginUser?.id,
@@ -144,7 +144,7 @@ const fetchData = async () => {
         }
     );
     renderList.value = res.data.records;
-    console.log(renderList.value)
+    // console.log(renderList.value)
   } catch (err) {
     // you can report use errorHandler or other
   } finally {

@@ -65,7 +65,7 @@ import { onMounted, ref, watchEffect } from "vue";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import moment from "moment";
-import {Announcement, AnnouncementControllerService} from "../../../generated";
+import {Announcement, AnnouncementControllerService, Service} from "../../../generated";
 
 const tableRef = ref();
 
@@ -81,7 +81,7 @@ const searchParams = ref({
 
 const loadData = async () => {
   const res =
-    await AnnouncementControllerService.listAnnouncementVoByPageUsingPost(
+    await Service.listAnnouncementVoByPageUsingPost(
       searchParams.value
     );
   if (res.code === 200) {
@@ -175,7 +175,7 @@ const onPageSizeChange = (size: number) => {
 };
 
 const doDelete = async (announcement: Announcement) => {
-  const res = await AnnouncementControllerService.deleteAnnouncementUsingPost({
+  const res = await Service.deleteAnnouncementUsingPost({
     id: announcement.id,
   });
   if (res.code === 200) {

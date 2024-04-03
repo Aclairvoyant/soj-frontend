@@ -180,11 +180,9 @@ import store from "@/store";
 import CodeViewer from "@/components/CodeViewer.vue";
 import RecordDetail from "@/components/RecordDetail.vue";
 import {
-  QuestionControllerService,
   QuestionSubmitAddRequest,
-  QuestionSubmitControllerService,
   QuestionSubmitVO,
-  QuestionVO,
+  QuestionVO, Service,
 } from "../../../generated";
 import MdViewerV3 from "@/components/MdViewerV3.vue";
 import QuestionComment from "@/components/QuestionComment.vue";
@@ -247,7 +245,7 @@ const runSelfTest = async () => {
     return;
   }
 
-  const res = await QuestionControllerService.runQuestionSubmitUsingPost({
+  const res = await Service.runQuestionSubmitUsingPost({
     code: form.value.code,
     input: selfTestForm.value.input,
     language: form.value.language,
@@ -279,7 +277,7 @@ const runSelfTest = async () => {
 const tabChanges = async (key: string) => {
   if (key === "record") {
     const res =
-      await QuestionControllerService.listQuestionSubmitByPageUsingPost({
+      await Service.listQuestionSubmitByPageUsingPost({
         userId: store.state.user?.loginUser?.id,
         questionId: question.value?.id,
         sortField: "createTime",
@@ -292,7 +290,7 @@ const tabChanges = async (key: string) => {
     }
   } else if (key === "answer") {
     //请求答案
-    const res = await QuestionControllerService.getQuestionAnswerUsingGet(
+    const res = await Service.getQuestionAnswerUsingGet(
       question.value?.id as any
     );
     answer.value = res.data;
@@ -304,7 +302,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const loadData = async () => {
-  const res = await QuestionControllerService.getQuestionVoByIdUsingGet(
+  const res = await Service.getQuestionVoByIdUsingGet(
     props.id as any
   );
   if (res.code === 200) {
@@ -339,7 +337,7 @@ const doSubmit = async () => {
     return;
   }
 
-  const res = await QuestionControllerService.doQuestionSubmitUsingPost({
+  const res = await Service.doQuestionSubmitUsingPost({
     ...form.value,
     questionId: question.value.id,
   });

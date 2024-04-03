@@ -102,7 +102,7 @@
 import { useStore } from "vuex";
 import {
   FileService,
-  LoginUserVO,
+  LoginUserVO, Service,
   UserControllerService,
   UserUpdateMyRequest,
 } from "../../../../generated";
@@ -156,7 +156,7 @@ const openEditDrawer = () => {
   visible.value = true;
 };
 const handleOk = async () => {
-  const res = await UserControllerService.updateMyUserUsingPost(
+  const res = await Service.updateMyUserUsingPost(
     updateForm.value
   );
   if (res.code === 200) {
@@ -192,11 +192,11 @@ const closeEditDrawer = () => {
 const uploadAvatar = async (options: RequestOption) => {
   const { onProgress } = options;
   onProgress(0);
-  const res = await FileService.uploadUsingPost(file.value.file);
+  const res = await Service.uploadUsingPost(file.value.file);
   onProgress(80);
   if (res.code === 200) {
     updateForm.value.userAvatar = res.data;
-    const imgUrlRes = await FileService.getTempAccessUsingPost(res.data);
+    const imgUrlRes = await Service.getTempAccessUsingPost(res.data);
     userAvatarImg = imgUrlRes.data;
     onProgress(100);
     Message.success("上传头像成功！");
