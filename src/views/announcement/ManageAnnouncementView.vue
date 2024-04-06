@@ -65,7 +65,7 @@ import { onMounted, ref, watchEffect } from "vue";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import moment from "moment";
-import {Announcement, AnnouncementControllerService, Service} from "../../../generated";
+import {Announcement, Service} from "../../../generated";
 
 const tableRef = ref();
 

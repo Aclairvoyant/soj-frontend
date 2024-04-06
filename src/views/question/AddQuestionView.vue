@@ -125,7 +125,7 @@ import MdEditor from "@/components/MdEditor.vue";
 import message from "@arco-design/web-vue/es/message";
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";
-import {QuestionControllerService, Service} from "../../../generated";
+import {Service} from "../../../generated";
 import * as XLSX from "xlsx";
 import { watch } from 'vue';
 import {Modal} from "@arco-design/web-vue";

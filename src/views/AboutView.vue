@@ -100,9 +100,7 @@
 <script setup lang="ts">
 import { useStore } from "vuex";
 import {
-  FileService,
   LoginUserVO, Service,
-  UserControllerService,
   UserUpdateMyRequest,
 } from "../../generated";
 import { computed, ref } from "vue";

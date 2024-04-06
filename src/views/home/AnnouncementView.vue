@@ -25,7 +25,7 @@
 
 <script setup>
 import {onMounted, ref} from 'vue';
-import {AnnouncementControllerService, Service} from "../../../generated";
+import {Service} from "../../../generated";
 
 const announcements = ref([]);
 const activeIndex = ref(0); // 存储当前激活公告的索引

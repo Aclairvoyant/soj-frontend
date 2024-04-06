@@ -18,7 +18,7 @@ import useLoading from "@/hooks/loading";
 import useChartOption from "@/hooks/chart-option";
 import ChartComponents from "@/components/ChartComponents.vue";
 import { onMounted, ref } from "vue";
-import {QuestionSolveControllerService, UserControllerService} from "../../../../generated";
+import {Service} from "../../../../generated";
 
 const { loading } = useLoading();
 const questionUnSolveCount = ref(0);
@@ -26,7 +26,7 @@ const questionSolveCount = ref(0);
 const questionCount = ref(0);
 onMounted(async () => {
   try {
-    const personalData = await UserControllerService.getPersonalDataUsingGet1()
+    const personalData = await Service.getPersonalDataUsingGet()
     questionCount.value = personalData.data?.questionCount ?? 0;
     questionSolveCount.value = personalData.data?.questionSolveCount ?? 0;
     questionUnSolveCount.value = questionCount.value - questionSolveCount.value;

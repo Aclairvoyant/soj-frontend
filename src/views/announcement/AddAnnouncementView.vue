@@ -43,7 +43,7 @@ import {onMounted, ref} from "vue";
 import message from "@arco-design/web-vue/es/message";
 import {useRoute} from "vue-router";
 import {useRouter} from "vue-router";
-import {AnnouncementControllerService, Service} from "../../../generated";
+import {Service} from "../../../generated";
 import {watch} from "vue";
 import {Modal} from "@arco-design/web-vue";
 import MdEditorV3 from "@/components/MdEditorV3.vue";
@@ -76,7 +76,7 @@ const loadData = async () => {
   if (!id) {
     return;
   }
-  const res = await AnnouncementControllerService.getAnnouncementVoByIdUsingGet(id as any);
+  const res = await Service.getAnnouncementVoByIdUsingGet(id as any);
 
   if (res.code === 200) {
     form.value = res.data as any;

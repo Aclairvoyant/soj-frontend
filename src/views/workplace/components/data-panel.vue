@@ -104,7 +104,7 @@
 import { onMounted, ref } from "vue";
 import message from "@arco-design/web-vue/es/message";
 import {
-  QuestionSolveControllerService, Service, UserControllerService
+   Service
 } from "../../../../generated";
 
 const commitCount = ref(0);

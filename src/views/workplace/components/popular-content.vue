@@ -73,8 +73,6 @@ import moment from "moment";
 
 import store from "@/store";
 import {
-  QuestionControllerService,
-  QuestionSubmitControllerService,
   QuestionSubmitQueryRequest, Service,
 } from "../../../../generated";
 import message from "@arco-design/web-vue/es/message";

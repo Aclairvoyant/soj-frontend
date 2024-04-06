@@ -61,11 +61,11 @@
 <script setup lang="ts">
 import { routes } from "@/router/routes";
 import { useRoute, useRouter } from "vue-router";
-import {computed, onMounted, ref} from "vue";
+import {computed, ref} from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
 import message from "@arco-design/web-vue/es/message";
-import {UserControllerService} from "../../generated";
+import {Service} from "../../generated";
 
 const router = useRouter();
 const route = useRoute();
@@ -107,7 +107,7 @@ const doMenuClick = (key: string) => {
 const loginOut = async () => {
   try {
     //console.log("退出登录");
-    await UserControllerService.userLogoutUsingPost();
+    await Service.userLogoutUsingPost();
 
     //退出登录后跳转到登录页面
     await router.push({

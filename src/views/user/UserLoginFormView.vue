@@ -316,7 +316,7 @@ import {ValidatedError} from "@arco-design/web-vue/es/form/interface";
 import {useStore} from "vuex";
 import useLoading from "@/hooks/loading";
 import message from "@arco-design/web-vue/es/message";
-import {Service, UserControllerService} from "../../../generated";
+import {Service} from "../../../generated";
 
 const router = useRouter();
 const errorMessage = ref("");
@@ -438,7 +438,7 @@ const handleSendCaptcha = async (email: string) => {
       }
     }, 1000);
     try {
-      const res = await UserControllerService.sendMailCodeUsingGet(email);
+      const res = await Service.sendMailCodeUsingGet(email);
       if (res.code === 200) {
         message.success("验证码发送成功");
       }
@@ -498,7 +498,7 @@ const handleSubmit = async ({
           email: values.email,
           emailCode: values.emailCode,
         };
-        res = await UserControllerService.loginByMailUsingPost(
+        res = await Service.loginByMailUsingPost(
             UserLoginByMailRequest
         );
       } catch (e) {

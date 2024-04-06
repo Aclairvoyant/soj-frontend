@@ -12,6 +12,7 @@ import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
 import AddAnnouncementView from "@/views/announcement/AddAnnouncementView.vue";
 import ManageAnnouncementView from "@/views/announcement/ManageAnnouncementView.vue";
 import PostDetailView from "@/views/post/PostDetailView.vue";
+import AddPostView from "@/views/post/AddPostView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
     {
@@ -37,6 +38,14 @@ export const routes: Array<RouteRecordRaw> = [
         path: "/questions",
         name: "题目列表",
         component: QuestionsView,
+    },
+    {
+        path: "/add/post",
+        name: "发布帖子",
+        component: AddPostView,
+        meta: {
+            access: AccessEnum.USER
+        }
     },
     {
         path: "/add/question",

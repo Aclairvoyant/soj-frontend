@@ -1,15 +1,21 @@
 <template>
   <a-list
-    class="list-demo-action-layout"
-    :bordered="false"
-    :data="posts"
-    :pagination-props="paginationProps"
+      class="list-demo-action-layout"
+      :bordered="false"
+      :data="posts"
+      :pagination-props="{
+        showTotal: true,
+        pageSize: searchParams.pageSize,
+        current: searchParams.current,
+        total,
+        }"
+      @page-change="onPageChange"
   >
     <a-list-item
-      class="list-demo-item"
-      action-layout="vertical"
-      v-for="post in posts"
-      :key="post.id"
+        class="list-demo-item"
+        action-layout="vertical"
+        v-for="post in posts"
+        :key="post.id"
     >
       <template #actions>
         <span class="action" key="heart" @click="onLikeChange(post.id)">
@@ -30,18 +36,22 @@
           </span>
           {{ post.favourNum }}
         </span>
-        <span @click="goToPostDetail(post)"><icon-detail />查看详情</span>
+        <span @click="goToPostDetail(post)"><icon-menu />查看详情</span>
+        <span @click.stop="toggleContent(post)"><icon-fullscreen />展开</span>
       </template>
-      <template #extra>
-        <div class="image-area">
-          <img alt="arco-design" :src="post.userAvatar" />
-        </div>
-      </template>
-      <a-list-item-meta :title="post.title" :description="post.content">
+      <a-list-item-meta :title="post.title">
         <template #avatar>
           <a-avatar shape="square">
             <img alt="avatar" :src="post.user?.userAvatar" />
           </a-avatar>
+        </template>
+        <template #description>
+          <div v-if="post.isExpanded">
+            {{ post.content }}
+          </div>
+          <div v-else>
+            {{ post.content.substring(0, 200) + '...' }}
+          </div>
         </template>
       </a-list-item-meta>
     </a-list-item>
@@ -49,25 +59,31 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import {onMounted, ref, watchEffect} from "vue";
 import {
-  Post,
-  PostControllerService,
-  PostFavourControllerService,
-  PostThumbControllerService, Service,
+  Post, Service,
 } from "../../../generated";
 import { useRouter } from "vue-router";
 
 const posts = ref([]);
 
+const toggleContent = (post: any) => {
+  post.isExpanded = !post.isExpanded;
+};
+const total = ref(0);
+const searchParams = ref({
+  pageSize: 10,
+  current: 1,
+});
+
 
 const fetchPostsAndCheckStatus = async () => {
-  const res = await Service.listPostVoByPageUsingPost({
-    current: 1,
-    pageSize: 10,
-  });
+  const res = await Service.listPostVoByPageUsingPost(
+    searchParams.value
+  );
 
   if (res.code === 200) {
+    total.value = res.data?.total ?? 0;
     // 初始化帖子列表，为每个帖子增加 liked 和 starred 属性
     posts.value = res.data?.records.map((post: any) => ({
       ...post,
@@ -84,6 +100,21 @@ const fetchPostsAndCheckStatus = async () => {
     );
   }
 };
+
+const onPageChange = (page: number) => {
+  searchParams.value = {
+    ...searchParams.value,
+    current: page,
+  };
+};
+
+/**
+ * 监听 searchParams 变量，改变时触发页面的重新加载
+ */
+watchEffect(() => {
+  fetchPostsAndCheckStatus();
+});
+
 
 const checkLike = async (id: any, post: any) => {
   const res = await Service.checkThumbUsingPost(id);
