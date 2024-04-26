@@ -62,7 +62,7 @@
         </a-tag>
       </template>
       <template #user="{ record }">
-        {{ record.userVO.userName }}
+        {{ record.userId }}
       </template>
     </a-table>
   </div>
@@ -132,6 +132,7 @@ const loadData = async () => {
   if (res.code === 200) {
     dataList.value = res.data.records;
     total.value = res.data.total;
+    console.log(dataList.value)
   } else {
     message.error("加载失败，" + res.message);
   }

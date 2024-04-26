@@ -293,7 +293,11 @@ const tabChanges = async (key: string) => {
     const res = await Service.getQuestionAnswerUsingGet(
       question.value?.id as any
     );
-    answer.value = res.data;
+    if (res.code === 200) {
+      answer.value = res.data;
+    } else {
+      message.error("加载失败，" + res.message);
+    }
   }
 };
 

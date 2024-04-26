@@ -1,4 +1,12 @@
 <template>
+  <a-form :model="searchParams" layout="inline">
+    <a-form-item field="title" label="搜索" style="min-width: 950px">
+      <a-input v-model="searchParams.searchText" placeholder="请输入查询的内容" />
+    </a-form-item>
+    <a-form-item>
+      <a-button type="primary" @click="doSubmit">搜索</a-button>
+    </a-form-item>
+  </a-form>
   <a-list
       class="list-demo-action-layout"
       :bordered="false"
@@ -74,7 +82,31 @@ const total = ref(0);
 const searchParams = ref({
   pageSize: 10,
   current: 1,
+  title: "",
+  content: "",
+  searchText: "",
+  tags: [],
 });
+
+const doSubmit = async() => {
+  const res = await Service.searchPostVoByPageUsingPost(
+    searchParams.value
+  );
+  if (res.code === 200) {
+    total.value = res.data?.total ?? 0;
+    posts.value = res.data?.records.map((post: any) => ({
+      ...post,
+      liked: false,
+      starred: false,
+    }));
+    await Promise.all(
+      posts.value.map(async (post) => {
+        await checkLike(post.id, post);
+        await checkStar(post.id, post);
+      })
+    );
+  }
+};
 
 
 const fetchPostsAndCheckStatus = async () => {
