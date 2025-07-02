@@ -13,6 +13,11 @@
 #app {
 }
 </style>
+
+<style lang="less">
+@import './theme/index.less';
+</style>
+
 <script setup lang="ts">
 import BasicLayout from "@/layouts/BasicLayout.vue";
 import {onMounted} from "vue";

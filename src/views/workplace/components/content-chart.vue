@@ -1,24 +1,34 @@
 <template>
-  <a-spin :loading="loading" style="width: 100%">
-    <a-card
-      class="general-card"
-      :header-style="{ paddingBottom: 0 }"
-      :body-style="{
-        paddingTop: '20px',
-      }"
-      title="做题分析"
-    >
-      <template #extra>
-        <a-link>？？</a-link>
-      </template>
-      <!--      <ChartComponents height="289px" :option="chartOption" />-->
-    </a-card>
-  </a-spin>
+  <a-card class="content-chart-card" :bordered="false">
+    <template #title>
+      <div class="card-title">
+        <icon-line-chart class="card-icon" />
+        <span>学习趋势</span>
+      </div>
+    </template>
+    <template #extra>
+      <a-tag color="blue" class="trend-tag">
+        本周数据
+      </a-tag>
+    </template>
+    
+    <div class="chart-placeholder">
+      <div class="placeholder-content">
+        <icon-bar-chart class="placeholder-icon" />
+        <div class="placeholder-text">图表功能开发中</div>
+        <a-button type="primary" size="small" class="placeholder-btn">
+          <template #icon>
+            <icon-plus />
+          </template>
+          敬请期待
+        </a-button>
+      </div>
+    </div>
+  </a-card>
 </template>
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import { graphic } from "echarts";
 import useLoading from "@/hooks/loading";
 import useChartOption from "@/hooks/chart-option";
 import ChartComponents from "@/components/ChartComponents.vue";
@@ -46,6 +56,7 @@ const graphicElements = ref([
   graphicFactory({ left: "2.6%" }),
   graphicFactory({ right: 0 }),
 ]);
+
 const { chartOption } = useChartOption(() => {
   return {
     grid: {
@@ -132,7 +143,6 @@ const { chartOption } = useChartOption(() => {
         data: chartsData.value,
         type: "line",
         smooth: true,
-        // symbol: 'circle',
         symbolSize: 12,
         emphasis: {
           focus: "series",
@@ -142,60 +152,118 @@ const { chartOption } = useChartOption(() => {
         },
         lineStyle: {
           width: 3,
-          color: new graphic.LinearGradient(0, 0, 1, 0, [
-            {
-              offset: 0,
-              color: "rgba(30, 231, 255, 1)",
-            },
-            {
-              offset: 0.5,
-              color: "rgba(36, 154, 255, 1)",
-            },
-            {
-              offset: 1,
-              color: "rgba(111, 66, 251, 1)",
-            },
-          ]),
+          color: '#165dff',
         },
         showSymbol: false,
         areaStyle: {
           opacity: 0.8,
-          color: new graphic.LinearGradient(0, 0, 0, 1, [
-            {
-              offset: 0,
-              color: "rgba(17, 126, 255, 0.16)",
-            },
-            {
-              offset: 1,
-              color: "rgba(17, 128, 255, 0)",
-            },
-          ]),
+          color: '#e6f4ff',
         },
       },
     ],
   };
 });
+
 const fetchData = async () => {
   setLoading(true);
   try {
-    // const { data: chartData } = await queryContentData();
-    // chartData.forEach((el: ContentDataRecord, idx: number) => {
-    //   xAxis.value.push(el.x);
-    //   chartsData.value.push(el.y);
-    //   if (idx === 0) {
-    //     graphicElements.value[0].style.text = el.x;
-    //   }
-    //   if (idx === chartData.length - 1) {
-    //     graphicElements.value[1].style.text = el.x;
-    //   }
-    // });
+    // 图表数据获取逻辑
   } catch (err) {
-    // you can report use errorHandler or other
+    // 错误处理
   } finally {
     setLoading(false);
   }
 };
+
 fetchData();
 </script>
 
-<style scoped lang="less"></style>
+<style scoped>
+.content-chart-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: none;
+  overflow: hidden;
+  min-height: 400px;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.card-icon {
+  color: #165dff;
+  font-size: 18px;
+}
+
+.trend-tag {
+  font-weight: 500;
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+
+.chart-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 8px;
+  margin: 16px 0;
+  border: 2px dashed #e2e8f0;
+}
+
+.placeholder-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.placeholder-icon {
+  font-size: 48px;
+  color: #cbd5e1;
+}
+
+.placeholder-text {
+  color: #64748b;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.placeholder-btn {
+  border-radius: 6px;
+  font-weight: 500;
+  background: linear-gradient(135deg, #165dff 0%, #0e42d2 100%);
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(22, 93, 255, 0.3);
+}
+
+.placeholder-btn:hover {
+  background: linear-gradient(135deg, #0e42d2 0%, #0a2f9e 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(22, 93, 255, 0.4);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .chart-placeholder {
+    height: 250px;
+  }
+  
+  .placeholder-icon {
+    font-size: 36px;
+  }
+  
+  .placeholder-text {
+    font-size: 14px;
+  }
+}
+</style>

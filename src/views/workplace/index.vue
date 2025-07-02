@@ -1,35 +1,47 @@
 <template>
-  <div class="container">
-    <div class="left-side">
-      <div class="panel">
-
-        <a-grid :cols="24" :col-gap="16" :row-gap="16">
-          <a-grid-item
-              :span="{ xs: 24, sm: 24, md: 24, lg: 12, xl: 12, xxl: 12 }"
-          >
-            <aboutView />
-          </a-grid-item>
-          <a-grid-item
-              :span="{ xs: 24, sm: 24, md: 24, lg: 12, xl: 12, xxl: 12 }"
-          >
-            <Banner/>
-            <DataPanel />
-          </a-grid-item>
-        </a-grid>
-
-
-<!--                <ContentChart />-->
+  <div class="workplace-container">
+    <!-- 页面头部 -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="title-section">
+          <a-typography-title :heading="2" class="page-title">
+            <icon-dashboard class="title-icon" />
+            个人数据总览
+          </a-typography-title>
+          <a-typography-text class="subtitle">欢迎回来！这里是你的学习数据概览</a-typography-text>
+        </div>
+        <div class="header-actions">
+          <a-button type="primary" size="large" class="refresh-btn">
+            <template #icon>
+              <icon-refresh />
+            </template>
+            刷新数据
+          </a-button>
+        </div>
       </div>
-      <a-grid :cols="24" :col-gap="16" :row-gap="16" style="margin-top: 16px">
-        <a-grid-item
-          :span="{ xs: 24, sm: 24, md: 24, lg: 12, xl: 12, xxl: 12 }"
-        >
-          <PopularContent />
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="main-content">
+      <a-grid :cols="24" :col-gap="24" :row-gap="24">
+        <!-- 用户信息和数据面板 -->
+        <a-grid-item :span="{ xs: 24, sm: 24, md: 24, lg: 12, xl: 12, xxl: 12 }">
+          <div class="left-panel">
+            <Banner/>
+            <aboutView />
+            <div class="data-panel-wrapper">
+              
+              <DataPanel />
+            </div>
+          </div>
         </a-grid-item>
-        <a-grid-item
-          :span="{ xs: 24, sm: 24, md: 24, lg: 12, xl: 12, xxl: 12 }"
-        >
-          <CategoriesPercent />
+
+        <!-- 右侧面板 -->
+        <a-grid-item :span="{ xs: 24, sm: 24, md: 24, lg: 12, xl: 12, xxl: 12 }">
+          <div class="right-panel">
+            <PopularContent />
+            <CategoriesPercent />
+          </div>
         </a-grid-item>
       </a-grid>
     </div>
@@ -47,106 +59,121 @@ import ContentChart from "@/views/workplace/components/content-chart.vue";
 
 <script lang="ts">
 export default {
-  name: "DashboardWorkPlace", // If you want the include property of keep-alive to take effect, you must name the component
+  name: "DashboardWorkPlace",
 };
 </script>
 
-<style lang="less" scoped>
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+<style scoped>
+.workplace-container {
+  padding: 24px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
-.container {
-  background-color: var(--color-fill-2);
-  padding: 0;
+
+.page-header {
+  background: #fff;
+  padding: 32px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+.header-content {
   display: flex;
-  width: 100%;
-  height: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-section {
+  display: flex;
   flex-direction: column;
 }
 
-.left-side {
-  flex: 1;
-  overflow: auto;
+.page-title {
+  margin: 0 !important;
+  color: #1d2129;
+  display: flex;
+  align-items: center;
 }
 
-.right-side {
-  width: 280px;
-  margin-left: 16px;
+.title-icon {
+  margin-right: 12px;
+  color: #165dff;
+  font-size: 24px;
 }
 
-.panel {
-  background-color: var(--color-bg-2);
-  border-radius: 4px;
-  overflow: auto;
+.subtitle {
+  margin-top: 8px;
+  color: #86909c;
+  font-size: 14px;
 }
 
-:deep(.panel-border) {
-  margin-bottom: 0;
-  border-bottom: 1px solid rgb(var(--gray-2));
+.header-actions {
+  display: flex;
+  gap: 12px;
 }
 
-.moduler-wrap {
-  border-radius: 4px;
-  background-color: var(--color-bg-2);
+.refresh-btn {
+  background: linear-gradient(135deg, #165dff 0%, #0e42d2 100%);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(22, 93, 255, 0.3);
+}
 
-  :deep(.text) {
-    font-size: 12px;
-    text-align: center;
-    color: rgb(var(--gray-8));
+.refresh-btn:hover {
+  background: linear-gradient(135deg, #0e42d2 0%, #0a2f9e 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(22, 93, 255, 0.4);
+}
+
+.main-content {
+  margin-bottom: 24px;
+}
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.data-panel-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .workplace-container {
+    padding: 16px;
   }
-
-  :deep(.wrapper) {
-    margin-bottom: 8px;
-    text-align: center;
-    cursor: pointer;
-
-    &:last-child {
-      .text {
-        margin-bottom: 0;
-      }
-    }
-
-    &:hover {
-      .icon {
-        color: rgb(var(--arcoblue-6));
-        background-color: #e8f3ff;
-      }
-
-      .text {
-        color: rgb(var(--arcoblue-6));
-      }
-    }
+  
+  .page-header {
+    padding: 24px;
   }
-
-  :deep(.icon) {
-    display: inline-block;
-    width: 32px;
-    height: 32px;
-    margin-bottom: 4px;
-    color: rgb(var(--dark-gray-1));
-    line-height: 32px;
-    font-size: 16px;
-    text-align: center;
-    background-color: rgb(var(--gray-1));
-    border-radius: 4px;
+  
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
   }
-}
-</style>
-
-<style lang="less" scoped>
-// responsive
-.mobile {
-  .container {
-    display: block;
-  }
-
-  .right-side {
-    // display: none;
+  
+  .header-actions {
     width: 100%;
-    margin-left: 0;
-    margin-top: 16px;
+    justify-content: center;
+  }
+  
+  .left-panel,
+  .right-panel {
+    gap: 16px;
   }
 }
 </style>

@@ -8,6 +8,7 @@ import "@arco-design/web-vue/dist/arco.css";
 import "@/plugins/axios";
 import "@/access/index";
 import 'bytemd/dist/index.css';
+import "@/theme/index.less";
 
 createApp(App)
     .use(ArcoVue)

@@ -6,4 +6,10 @@ module.exports = defineConfig({
     chainWebpack(config) {
         config.plugin("monaco").use(new MonacoWebpackPlugin());
     },
+    devServer: {
+        overlay: {
+            warnings: false,
+            errors: false
+        }
+    }
 });

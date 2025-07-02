@@ -63,7 +63,7 @@ let form = ref({
 watch(
     () => form.value,
     (newValue) => {
-      if (!updatePage) { // 仅在“创建题目”状态下保存草稿
+      if (!updatePage) { // 仅在"创建题目"状态下保存草稿
         localStorage.setItem("announcementFormDraft", JSON.stringify(newValue));
       }
     },
@@ -174,9 +174,10 @@ const doCleanDraft = () => {
 
 <style scoped>
 #addAnnouncementView {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 20px;
+  max-width: 100%;
+  margin: 0;
+  padding: 24px;
+  box-sizing: border-box;
 }
 
 h2 {

@@ -1,9 +1,22 @@
 <template>
   <div class="login-form-wrapper">
-    <div class="login-form-title">
-      {{ formStatus ? "在线判题OJ系统" : "注册" }}
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-logo">
+          <img src="@/assets/oj-logo.png" alt="logo" width="48" height="48" />
     </div>
-    <div class="login-form-error-msg"></div>
+        <h2 class="form-title">
+          {{ formStatus ? "欢迎回来" : "创建账号" }}
+        </h2>
+        <p class="form-subtitle">
+          {{ formStatus ? "登录你的SOJ账户" : "加入我们的编程社区" }}
+        </p>
+      </div>
+      
+      <div class="form-error-msg" v-if="errorMessage">
+        <a-alert type="error" :content="errorMessage" show-icon />
+      </div>
+      
     <a-form
         ref="loginFormRef"
         :model="userInfo"
@@ -11,17 +24,22 @@
         layout="vertical"
         @submit="handleSubmit"
     >
-      <!--      用户名和密码登录-->
-      <div v-if="formStatus && !isEmailLogin">
+        <!-- 用户名和密码登录 -->
+        <div v-if="formStatus && !isEmailLogin" class="form-section">
         <a-form-item
             field="userAccount"
             :rules="[{ required: true, message: '用户名不能为空' }]"
             :validate-trigger="['change', 'blur', 'input']"
             hide-label
         >
-          <a-input v-model="userInfo.userAccount" placeholder="请输入用户名">
+            <a-input 
+              v-model="userInfo.userAccount" 
+              placeholder="请输入用户名"
+              size="large"
+              class="form-input"
+            >
             <template #prefix>
-              <icon-user/>
+                <icon-user class="input-icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -38,30 +56,35 @@
               v-model="userInfo.userPassword"
               placeholder="请输入密码"
               allow-clear
+                size="large"
+                class="form-input"
           >
             <template #prefix>
-              <icon-lock/>
+                <icon-lock class="input-icon" />
             </template>
           </a-input-password>
         </a-form-item>
       </div>
-      <!--邮箱登录-->
-      <div v-if="formStatus && isEmailLogin">
+        
+        <!-- 邮箱登录 -->
+        <div v-if="formStatus && isEmailLogin" class="form-section">
         <a-form-item
             field="email"
             :rules="[
             { required: true, message: '邮箱账号不能为空' },
-            {
-              type: 'email',
-              message: '请输入正确的邮箱',
-            },
+                { type: 'email', message: '请输入正确的邮箱' },
           ]"
             :validate-trigger="['change', 'blur', 'input']"
             hide-label
         >
-          <a-input v-model="userInfo.email" placeholder="请输入邮箱账号">
+            <a-input 
+              v-model="userInfo.email" 
+              placeholder="请输入邮箱账号"
+              size="large"
+              class="form-input"
+            >
             <template #prefix>
-              <icon-email/>
+                <icon-email class="input-icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -81,25 +104,33 @@
               :button-text="captchaTextRender"
               search-button
               @search="handleSendCaptcha(userInfo.email)"
-              :button-props="{ disabled: !isAllowCount }"
+                :button-props="{ disabled: !isAllowCount, size: 'large' }"
+                size="large"
+                class="form-input"
           >
             <template #prefix>
-              <icon-lock/>
+                <icon-safe class="input-icon" />
             </template>
           </a-input-search>
         </a-form-item>
       </div>
-      <!--用户注册-->
-      <div v-if="!formStatus">
+        
+        <!-- 用户注册 -->
+        <div v-if="!formStatus" class="form-section">
         <a-form-item
             field="userAccount"
             :rules="[{ required: true, message: '用户名不能为空' }]"
             :validate-trigger="['change', 'blur', 'input']"
             hide-label
         >
-          <a-input v-model="userInfo.userAccount" placeholder="请输入用户名">
+            <a-input 
+              v-model="userInfo.userAccount" 
+              placeholder="请输入用户名"
+              size="large"
+              class="form-input"
+            >
             <template #prefix>
-              <icon-user/>
+                <icon-user class="input-icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -116,9 +147,11 @@
               v-model="userInfo.userPassword"
               placeholder="请输入密码"
               allow-clear
+                size="large"
+                class="form-input"
           >
             <template #prefix>
-              <icon-lock/>
+                <icon-lock class="input-icon" />
             </template>
           </a-input-password>
         </a-form-item>
@@ -135,9 +168,11 @@
               v-model="userInfo.checkPassword"
               placeholder="请再次输入密码"
               allow-clear
+                size="large"
+                class="form-input"
           >
             <template #prefix>
-              <icon-lock/>
+                <icon-lock class="input-icon" />
             </template>
           </a-input-password>
         </a-form-item>
@@ -145,17 +180,19 @@
             field="email"
             :rules="[
             { required: true, message: '邮箱账号不能为空' },
-            {
-              type: 'email',
-              message: '请输入正确的邮箱',
-            },
+                { type: 'email', message: '请输入正确的邮箱' },
           ]"
             :validate-trigger="['change', 'blur', 'input']"
             hide-label
         >
-          <a-input v-model="userInfo.email" placeholder="请输入邮箱账号">
+            <a-input 
+              v-model="userInfo.email" 
+              placeholder="请输入邮箱账号"
+              size="large"
+              class="form-input"
+            >
             <template #prefix>
-              <icon-email/>
+                <icon-email class="input-icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -175,56 +212,85 @@
               :button-text="captchaTextRender"
               search-button
               @search="handleSendCaptcha(userInfo.email)"
-              :button-props="{ disabled: !isAllowCount }"
+                :button-props="{ disabled: !isAllowCount, size: 'large' }"
+                size="large"
+                class="form-input"
           >
             <template #prefix>
-              <icon-lock/>
+                <icon-safe class="input-icon" />
             </template>
           </a-input-search>
         </a-form-item>
       </div>
-      <a-space :size="16" direction="vertical">
-        <div v-if="formStatus" class="login-form-password-actions">
-          <a-link @click="changeLoginMethod">
-            {{ isEmailLogin ? "账号密码登录 " : "邮箱登录" }}
+        
+        <div class="form-actions">
+          <div v-if="formStatus" class="login-actions">
+            <a-link @click="changeLoginMethod" class="action-link">
+              {{ isEmailLogin ? "账号密码登录" : "邮箱登录" }}
           </a-link>
-          <a-link @click="openForgetPasswordModal">忘记密码?</a-link>
+            <a-link @click="openForgetPasswordModal" class="action-link">
+              忘记密码?
+            </a-link>
         </div>
+          
         <a-button
             v-if="formStatus"
             type="primary"
             html-type="submit"
             long
+              size="large"
             :loading="loading"
+              class="submit-btn"
         >
+            <template #icon>
+              <icon-login />
+            </template>
           登录
         </a-button>
-        <div v-if="!formStatus" class="login-form-password-actions">
+          
+          <div v-if="!formStatus" class="register-actions">
           <a-link
               @click="
               formStatus = !formStatus;
               loginFormRef?.value?.resetFields();
             "
-          >已有账号? 去登陆
+                class="action-link"
+            >
+              已有账号? 去登录
           </a-link>
         </div>
+          
         <a-button
-            type="text"
+              type="outline"
             long
-            class="login-form-register-btn"
+              size="large"
+              class="register-btn"
             @click="registerEvent"
             :loading="loading"
         >
-          注册账号
+            <template #icon>
+              <icon-user-add />
+            </template>
+            {{ formStatus ? "注册账号" : "创建账号" }}
         </a-button>
-      </a-space>
+        </div>
     </a-form>
+    </div>
+    
     <!-- 忘记密码模态框 -->
-    <a-modal v-model:visible="forgetPasswordModalVisible" :footer="false">
+    <a-modal 
+      v-model:visible="forgetPasswordModalVisible" 
+      :footer="false"
+      class="forget-password-modal"
+      width="400px"
+    >
       <template #title>
+        <div class="modal-title">
+          <icon-lock class="modal-icon" />
         重置密码
+        </div>
       </template>
-      <div>
+      <div class="modal-content">
         <a-form
             ref="forgetPasswordFormRef"
             :model="forgetPasswordForm"
@@ -239,9 +305,14 @@
               :validate-trigger="['change', 'blur', 'input']"
               hide-label
           >
-            <a-input v-model="forgetPasswordForm.email" placeholder="请输入注册邮箱">
+            <a-input 
+              v-model="forgetPasswordForm.email" 
+              placeholder="请输入注册邮箱"
+              size="large"
+              class="form-input"
+            >
               <template #prefix>
-                <icon-email/>
+                <icon-email class="input-icon" />
               </template>
             </a-input>
           </a-form-item>
@@ -261,10 +332,12 @@
                 :button-text="captchaTextRender"
                 search-button
                 @search="handleSendCaptcha(forgetPasswordForm.email)"
-                :button-props="{ disabled: !isAllowCount }"
+                :button-props="{ disabled: !isAllowCount, size: 'large' }"
+                size="large"
+                class="form-input"
             >
               <template #prefix>
-                <icon-lock/>
+                <icon-safe class="input-icon" />
               </template>
             </a-input-search>
           </a-form-item>
@@ -277,9 +350,14 @@
               :validate-trigger="['change', 'blur', 'input']"
               hide-label
           >
-            <a-input-password v-model="forgetPasswordForm.userPassword" placeholder="请输入新密码">
+            <a-input-password 
+              v-model="forgetPasswordForm.userPassword" 
+              placeholder="请输入新密码"
+              size="large"
+              class="form-input"
+            >
               <template #prefix>
-                <icon-lock/>
+                <icon-lock class="input-icon" />
               </template>
             </a-input-password>
           </a-form-item>
@@ -292,16 +370,28 @@
               :validate-trigger="['change', 'blur', 'input']"
               hide-label
           >
-            <a-input-password v-model="forgetPasswordForm.checkPassword" placeholder="请再次输入密码">
+            <a-input-password 
+              v-model="forgetPasswordForm.checkPassword" 
+              placeholder="请再次输入密码"
+              size="large"
+              class="form-input"
+            >
               <template #prefix>
-                <icon-lock/>
+                <icon-lock class="input-icon" />
               </template>
             </a-input-password>
           </a-form-item>
-          <div class="login-form-button">
-            <a-form-item>
-              <a-button type="primary" html-type="submit" long :loading="loading">提交</a-button>
-            </a-form-item>
+          <div class="modal-actions">
+            <a-button 
+              type="primary" 
+              html-type="submit" 
+              long 
+              size="large"
+              :loading="loading"
+              class="submit-btn"
+            >
+              重置密码
+            </a-button>
           </div>
         </a-form>
       </div>
@@ -310,7 +400,7 @@
 </template>
 
 <script lang="ts" setup>
-import {ref, reactive, onMounted} from "vue";
+import {ref, reactive, onMounted, computed} from "vue";
 import {useRouter} from "vue-router";
 import {ValidatedError} from "@arco-design/web-vue/es/form/interface";
 import {useStore} from "vuex";
@@ -599,52 +689,254 @@ const changeLoginMethod = () => {
 </script>
 
 <style lang="less" scoped>
+.login-form-wrapper {
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
+}
 
-.login-form {
-  width: 400px;
+.form-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideInUp 0.8s ease-out;
+}
+
+.form-header {
   text-align: center;
-  justify-content: center;
+  margin-bottom: 32px;
+}
 
-  &-wrapper {
-    width: 320px;
-  }
-
-  &-title {
-    color: var(--color-text-1);
-    font-weight: 700;
-    font-size: 24px;
-    line-height: 32px;
-    align-items: center;
-    text-align: left;
-  }
-
-  &-sub-title {
-    color: var(--color-text-3);
-    font-size: 16px;
-    line-height: 24px;
-  }
-
-  &-error-msg {
-    height: 32px;
-    color: rgb(var(--red-6));
-    line-height: 32px;
-  }
-
-  &-password-actions {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  &-register-btn {
-    color: var(--color-text-3) !important;
-  }
-
-  &-button {
-    margin-top: 16px;
-    display: flex;
-    justify-content: center;
-    text-align: center;
+.form-logo {
+  margin-bottom: 20px;
+  
+  img {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 }
 
+.form-title {
+  color: #1d2129;
+  font-size: 28px;
+    font-weight: 700;
+  margin: 0 0 8px 0;
+  background: linear-gradient(135deg, #165dff 0%, #4080ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.form-subtitle {
+  color: #86909c;
+    font-size: 16px;
+  margin: 0;
+  font-weight: 400;
+}
+
+.form-error-msg {
+  margin-bottom: 24px;
+}
+
+.form-section {
+  margin-bottom: 24px;
+}
+
+.form-input {
+  border-radius: 12px;
+  border: 2px solid #e5e6eb;
+  background: #fff;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: #165dff;
+    box-shadow: 0 2px 8px rgba(22, 93, 255, 0.1);
+  }
+  
+  &:focus-within {
+    border-color: #165dff;
+    box-shadow: 0 4px 12px rgba(22, 93, 255, 0.2);
+  }
+  
+  // 优化验证码按钮样式
+  :deep(.arco-input-search-button) {
+    height: 44px !important;
+    border-radius: 0 10px 10px 0 !important;
+    border-left: none !important;
+    background: linear-gradient(135deg, #165dff 0%, #4080ff 100%) !important;
+    border-color: #165dff !important;
+    color: #fff !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    
+    &:hover {
+      background: linear-gradient(135deg, #4080ff 0%, #165dff 100%) !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 12px rgba(22, 93, 255, 0.3) !important;
+    }
+    
+    &:disabled {
+      background: #f2f3f5 !important;
+      border-color: #e5e6eb !important;
+      color: #c9cdd4 !important;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+  }
+  
+  // 优化搜索框容器样式
+  :deep(.arco-input-search) {
+    border-radius: 12px !important;
+    overflow: hidden !important;
+  }
+}
+
+.input-icon {
+  color: #86909c;
+  font-size: 16px;
+}
+
+.form-actions {
+    display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.register-actions {
+    display: flex;
+    justify-content: center;
+  margin-bottom: 8px;
+}
+
+.action-link {
+  color: #165dff;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    color: #4080ff;
+    text-decoration: underline;
+  }
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #165dff 0%, #4080ff 100%);
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  height: 48px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(22, 93, 255, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.register-btn {
+  border-radius: 12px;
+  font-weight: 600;
+  height: 48px;
+  border: 2px solid #e5e6eb;
+  color: #1d2129;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: #165dff;
+    color: #165dff;
+    background: rgba(22, 93, 255, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(22, 93, 255, 0.1);
+  }
+}
+
+// 忘记密码模态框样式
+.forget-password-modal {
+  --modal-bg: rgba(255, 255, 255, 0.95);
+  --modal-border: rgba(0, 0, 0, 0.1);
+  --input-bg: #fff;
+  --input-border: #e5e6eb;
+  --input-color: #1d2129;
+  --placeholder-color: #c9cdd4;
+  --icon-color: #86909c;
+  
+  .arco-modal {
+    border-radius: 16px;
+    overflow: hidden;
+  }
+}
+
+.modal-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.modal-icon {
+  color: #165dff;
+  font-size: 18px;
+}
+
+.modal-content {
+  padding: 8px 0;
+}
+
+.modal-actions {
+  margin-top: 24px;
+}
+
+// 动画效果
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .form-card {
+    padding: 32px 24px;
+    margin: 0 16px;
+  }
+  
+  .form-title {
+    font-size: 24px;
+  }
+  
+  .form-subtitle {
+    font-size: 14px;
+  }
+  
+  .login-actions {
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+  
+  .action-link {
+    font-size: 14px;
+  }
+}
 </style>

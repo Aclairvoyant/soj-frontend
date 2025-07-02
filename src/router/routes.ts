@@ -13,6 +13,8 @@ import AddAnnouncementView from "@/views/announcement/AddAnnouncementView.vue";
 import ManageAnnouncementView from "@/views/announcement/ManageAnnouncementView.vue";
 import PostDetailView from "@/views/post/PostDetailView.vue";
 import AddPostView from "@/views/post/AddPostView.vue";
+import ProblemSetsView from "@/views/question/ProblemSetsView.vue";
+import ManageProblemSetsView from "@/views/question/ManageProblemSetsView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
     {
@@ -38,6 +40,11 @@ export const routes: Array<RouteRecordRaw> = [
         path: "/questions",
         name: "题目列表",
         component: QuestionsView,
+    },
+    {
+        path: "/problemSets",
+        name: "题单训练",
+        component: ProblemSetsView,
     },
     {
         path: "/add/post",
@@ -111,6 +118,14 @@ export const routes: Array<RouteRecordRaw> = [
             access: accessEnum.ADMIN,
             hideInMenu: true
         },
+    },
+    {
+        path: "/manage/problemSets",
+        name: "题单管理",
+        component: ManageProblemSetsView,
+        meta: {
+            access: AccessEnum.USER
+        }
     },
     {
         path: "/workplace",
