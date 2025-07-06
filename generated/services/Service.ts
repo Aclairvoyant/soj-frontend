@@ -1,4 +1,4 @@
-/* generated using openapi-typescript-codegen -- do not edit */
+/* generated using openapi-typescript-codegen -- do no edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
@@ -18,6 +18,7 @@ import type { BaseResponse_List_QuestionCommentVO_ } from '../models/BaseRespons
 import type { BaseResponse_List_QuestionVO_ } from '../models/BaseResponse_List_QuestionVO_';
 import type { BaseResponse_LoginUserVO_ } from '../models/BaseResponse_LoginUserVO_';
 import type { BaseResponse_long_ } from '../models/BaseResponse_long_';
+import type { BaseResponse_Map_string_object_ } from '../models/BaseResponse_Map_string_object_';
 import type { BaseResponse_Page_AnnouncementVO_ } from '../models/BaseResponse_Page_AnnouncementVO_';
 import type { BaseResponse_Page_PostVO_ } from '../models/BaseResponse_Page_PostVO_';
 import type { BaseResponse_Page_ProblemSetVO_ } from '../models/BaseResponse_Page_ProblemSetVO_';
@@ -253,6 +254,39 @@ export class Service {
             method: 'POST',
             url: '/api/announcement/update',
             body: announcementUpdateRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * doCheckin
+     * @returns BaseResponse_boolean_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static doCheckinUsingPost(): CancelablePromise<BaseResponse_boolean_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/api/checkin/do',
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * getCheckinList
+     * @returns BaseResponse_Map_string_object_ OK
+     * @throws ApiError
+     */
+    public static getCheckinListUsingGet(): CancelablePromise<BaseResponse_Map_string_object_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/api/checkin/list',
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,
@@ -803,13 +837,13 @@ export class Service {
         });
     }
     /**
-     * listAllProblemSetVO
+     * listAllQuestionSetVO
      * @param queryRequest queryRequest
      * @returns BaseResponse_List_ProblemSetVO_ OK
      * @returns any Created
      * @throws ApiError
      */
-    public static listAllProblemSetVoUsingPost(
+    public static listAllQuestionSetVoUsingPost(
         queryRequest: ProblemSetQueryRequest,
     ): CancelablePromise<BaseResponse_List_ProblemSetVO_ | any> {
         return __request(OpenAPI, {

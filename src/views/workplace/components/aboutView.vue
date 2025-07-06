@@ -7,7 +7,7 @@
           <span>用户基本信息</span>
         </div>
       </template>
-      
+
       <div class="user-avatar-section">
         <a-avatar :size="100" shape="circle" class="user-avatar">
           <img alt="头像" :src="userAvatarImg" />
@@ -27,7 +27,7 @@
         :bordered="false"
         class="user-descriptions"
       />
-      
+
       <template #extra>
         <a-button type="primary" size="small" @click="openEditDrawer" class="edit-btn">
           <template #icon>
@@ -54,7 +54,7 @@
           <span>编辑用户信息</span>
         </div>
       </template>
-      
+
       <div class="avatar-upload-section">
         <a-upload
           action="/"
@@ -79,9 +79,9 @@
 
       <a-form :model="updateForm" layout="vertical" class="edit-form">
         <a-form-item field="userName" label="用户名称" class="form-item">
-          <a-input 
-            v-model="updateForm.userName" 
-            placeholder="请输入用户名称" 
+          <a-input
+            v-model="updateForm.userName"
+            placeholder="请输入用户名称"
             class="form-input"
           />
         </a-form-item>
@@ -94,7 +94,7 @@
           />
         </a-form-item>
       </a-form>
-      
+
       <template #footer>
         <div class="drawer-footer">
           <a-button @click="closeEditDrawer" class="cancel-btn">取消</a-button>
@@ -144,11 +144,11 @@ const data = ref([
   },
   {
     label: "创建时间",
-    value: moment(store.state.user?.loginUser.createTime).format("YYYY-MM-DD HH:mm:ss"),
+    value: moment(store.state.user?.loginUser.createTime).utcOffset(8).format("YYYY-MM-DD HH:mm:ss"),
   },
   {
     label: "上次修改时间",
-    value: moment(store.state.user?.loginUser.updateTime).format("YYYY-MM-DD HH:mm:ss"),
+    value: moment(store.state.user?.loginUser.updateTime).utcOffset(8).format("YYYY-MM-DD HH:mm:ss"),
   },
 ]);
 
@@ -413,15 +413,15 @@ const uploadAvatar = async (option: RequestOption) => {
     width: 80px !important;
     height: 80px !important;
   }
-  
+
   .user-name {
     font-size: 18px;
   }
-  
+
   .avatar-upload-section {
     padding: 16px;
   }
-  
+
   .upload-avatar {
     width: 60px !important;
     height: 60px !important;

@@ -47,7 +47,7 @@
             <CheckInCalendar 
               :checkInDays="checkInDays" 
               :todayChecked="todayChecked"
-              @check-in="handleCheckIn"
+              
             />
           </div>
           
@@ -61,13 +61,14 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import PostView from "@/views/home/PostView.vue";
 import AnnouncementView from "@/views/home/AnnouncementView.vue";
 import CarouselView from "@/views/home/CarouselView.vue";
 import CheckInCalendar from "@/components/CheckInCalendar.vue";
 import QuickNavigation from "@/components/QuickNavigation.vue";
+import { Service } from '@/../generated/services/Service';
 
 // 今日统计数据
 const todayStats = ref({
@@ -77,50 +78,28 @@ const todayStats = ref({
 });
 
 // 打卡相关数据
-const checkInDays = ref([]);
+const checkInDays = ref<Array<string>>([]);
 const todayChecked = ref(false);
+const loading = ref(false);
 
-// 处理打卡签到
-const handleCheckIn = async () => {
+// 获取打卡数据
+const fetchCheckInData = async () => {
+  loading.value = true;
   try {
-    // 这里可以调用后端API进行打卡
-    // const res = await Service.checkIn();
-    
-    // 模拟打卡成功
-    todayChecked.value = true;
-    const today = new Date();
-    checkInDays.value.push(today.toISOString().split('T')[0]);
-    
-    // 显示成功提示
-    // message.success('打卡成功！');
-  } catch (error) {
-    // message.error('打卡失败，请重试');
+    const res = await Service.getCheckinListUsingGet();
+    if (res.code === 200 && res.data) {
+      checkInDays.value = res.data.checkInDays || [];
+      todayChecked.value = res.data.todayChecked || false;
+    }
+  } finally {
+    loading.value = false;
   }
 };
 
+
 // 初始化打卡数据
 onMounted(() => {
-  // 模拟获取打卡历史数据
-  const today = new Date();
-  const mockCheckInDays = [];
-  
-  // 生成最近30天的随机打卡数据
-  for (let i = 29; i >= 0; i--) {
-    const date = new Date(today);
-    date.setDate(date.getDate() - i);
-    const dateStr = date.toISOString().split('T')[0];
-    
-    // 随机生成打卡记录（80%的概率打卡）
-    if (Math.random() < 0.8) {
-      mockCheckInDays.push(dateStr);
-    }
-  }
-  
-  checkInDays.value = mockCheckInDays;
-  
-  // 检查今天是否已打卡
-  const todayStr = today.toISOString().split('T')[0];
-  todayChecked.value = mockCheckInDays.includes(todayStr);
+  fetchCheckInData();
 });
 </script>
 

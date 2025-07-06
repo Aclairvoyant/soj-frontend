@@ -207,7 +207,6 @@ const fetchProblemSets = async () => {
     const res = await Service.listProblemSetVoByPageUsingPost({
       current: 1,
       pageSize: 20,
-      isPublic: 1, // 只显示公开题单
     });
     if (res.code === 200 && res.data) {
       problemSets.value = res.data.records || [];

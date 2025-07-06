@@ -39,7 +39,7 @@
                   <span>用户信息</span>
                 </div>
               </template>
-              
+
               <div class="user-avatar-section">
                 <a-avatar :size="80" shape="circle" class="user-avatar">
                   <img alt="头像" :src="userAvatarImg || '/default-avatar.png'"/>
@@ -73,9 +73,9 @@
               <a-form @update:modelValue="onFieldUpdate" class="post-form">
                 <!-- 标题输入 -->
                 <a-form-item class="title-item">
-                  <a-input 
-                    v-model="postContent.title" 
-                    @update:modelValue="onFieldUpdate" 
+                  <a-input
+                    v-model="postContent.title"
+                    @update:modelValue="onFieldUpdate"
                     placeholder="请输入帖子标题..."
                     size="large"
                     class="title-input"
@@ -88,8 +88,8 @@
 
                 <!-- 标签选择 -->
                 <a-form-item class="tags-item">
-                  <a-input-tag 
-                    v-model="postContent.tags" 
+                  <a-input-tag
+                    v-model="postContent.tags"
                     placeholder="添加标签（按回车确认）"
                     class="tags-input"
                   />
@@ -98,8 +98,8 @@
                 <!-- Markdown编辑器 -->
                 <a-form-item class="editor-item">
                   <div class="editor-container">
-                    <MdEditorV3 
-                      v-model="postContent.content" 
+                    <MdEditorV3
+                      v-model="postContent.content"
                       @update:modelValue="onFieldUpdate"
                       class="markdown-editor"
                     />
@@ -174,11 +174,11 @@ const data = [
   },
   {
     label: "创建时间",
-    value: moment(store.state.user?.loginUser.createTime).format("YYYY-MM-DD HH:mm:ss"),
+    value: moment(store.state.user?.loginUser.createTime).utcOffset(8).format("YYYY-MM-DD HH:mm:ss"),
   },
   {
     label: "上次修改时间",
-    value: moment(store.state.user?.loginUser.updateTime).format("YYYY-MM-DD HH:mm:ss"),
+    value: moment(store.state.user?.loginUser.updateTime).utcOffset(8).format("YYYY-MM-DD HH:mm:ss"),
   },
 ] as DescData[];
 
@@ -441,22 +441,22 @@ onMounted(() => {
   .add-post-view {
     padding: 16px;
   }
-  
+
   .header-content {
     flex-direction: column;
     gap: 16px;
     align-items: flex-start;
   }
-  
+
   .header-actions {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .content-section {
     margin-top: 16px;
   }
-  
+
   .sidebar {
     position: static;
     margin-bottom: 16px;

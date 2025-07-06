@@ -38,7 +38,7 @@
                   <span>作者信息</span>
                 </div>
               </template>
-              
+
               <div class="user-avatar-section">
                 <a-avatar :size="80" shape="circle" class="user-avatar">
                   <img alt="头像" :src="userAvatarImg || '/default-avatar.png'"/>
@@ -275,7 +275,7 @@ const userData = computed(() => {
     },
     {
       label: "创建时间",
-      value: moment(postDetail.value.user.createTime).format("YYYY-MM-DD HH:mm:ss"),
+      value: moment(postDetail.value.user.createTime).utcOffset(8).format("YYYY-MM-DD HH:mm:ss"),
     },
   ];
 });

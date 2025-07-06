@@ -15,6 +15,7 @@ import PostDetailView from "@/views/post/PostDetailView.vue";
 import AddPostView from "@/views/post/AddPostView.vue";
 import ProblemSetsView from "@/views/question/ProblemSetsView.vue";
 import ManageProblemSetsView from "@/views/question/ManageProblemSetsView.vue";
+import NoAuthView from "@/views/NoAuthView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
     {
@@ -147,7 +148,7 @@ export const routes: Array<RouteRecordRaw> = [
     {
         path: "/:pathMatch(.*)*",
         name: "404",
-        redirect: {name: "首页"},
+        component: NoAuthView,
         meta: {
             hideInMenu: true
         }

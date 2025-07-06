@@ -1,4 +1,4 @@
-/* generated using openapi-typescript-codegen -- do not edit */
+/* generated using openapi-typescript-codegen -- do no edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
@@ -25,6 +25,7 @@ export type { BaseResponse_List_QuestionCommentVO_ } from './models/BaseResponse
 export type { BaseResponse_List_QuestionVO_ } from './models/BaseResponse_List_QuestionVO_';
 export type { BaseResponse_LoginUserVO_ } from './models/BaseResponse_LoginUserVO_';
 export type { BaseResponse_long_ } from './models/BaseResponse_long_';
+export type { BaseResponse_Map_string_object_ } from './models/BaseResponse_Map_string_object_';
 export type { BaseResponse_Page_AnnouncementVO_ } from './models/BaseResponse_Page_AnnouncementVO_';
 export type { BaseResponse_Page_PostVO_ } from './models/BaseResponse_Page_PostVO_';
 export type { BaseResponse_Page_ProblemSetVO_ } from './models/BaseResponse_Page_ProblemSetVO_';

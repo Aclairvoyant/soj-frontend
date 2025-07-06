@@ -36,10 +36,10 @@
         </a-tag>
       </template>
       <template #createTime="{ record }">
-        {{ moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}
+        {{ moment(record.createTime).utcOffset(8).format("YYYY-MM-DD HH:mm:ss") }}
       </template>
       <template #updateTime="{ record }">
-        {{ moment(record.updateTime).format("YYYY-MM-DD HH:mm:ss") }}
+        {{ moment(record.updateTime).utcOffset(8).format("YYYY-MM-DD HH:mm:ss") }}
       </template>
       <template #optional="{ record }">
         <a-space>

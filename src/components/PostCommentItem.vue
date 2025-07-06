@@ -4,7 +4,7 @@
         :author="comment.userName"
         :avatar="comment.userAvatar"
 
-        :datetime="moment(comment.createTime).format('YYYY-MM-DD HH:mm:ss')"
+        :datetime="moment(comment.createTime).utcOffset(8).format('YYYY-MM-DD HH:mm:ss')"
     >
       <MdViewerV3 :modelValue="comment.content" />
       <template #actions>

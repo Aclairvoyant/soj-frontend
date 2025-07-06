@@ -21,15 +21,15 @@
         type="primary" 
         size="large" 
         :disabled="todayChecked"
-        @click="handleCheckIn"
         class="checkin-btn"
         :loading="checking"
+        @click="goToQuestions"
       >
         <template #icon>
           <icon-check v-if="!todayChecked" />
           <icon-check-circle v-else />
         </template>
-        {{ todayChecked ? '今日已打卡' : '立即打卡' }}
+        {{ todayChecked ? '今日已打卡' : '去做题' }}
       </a-button>
     </div>
 
@@ -117,6 +117,7 @@
 /* eslint-disable no-undef */
 import { ref, computed, watch } from 'vue';
 import { IconCheck, IconCheckCircle, IconClockCircle, IconLeft, IconRight, IconGift } from '@arco-design/web-vue/es/icon';
+import { useRouter } from 'vue-router';
 
 // Props
 const props = defineProps({
@@ -201,16 +202,11 @@ const calendarDays = computed(() => {
   return days;
 });
 
-// 方法
-const handleCheckIn = async () => {
-  if (checking.value || props.todayChecked) return;
-  
-  checking.value = true;
-  try {
-    await new Promise(resolve => setTimeout(resolve, 1000)); // 模拟API调用
-    emit('check-in');
-  } finally {
-    checking.value = false;
+const router = useRouter();
+
+const goToQuestions = () => {
+  if (!props.todayChecked) {
+    router.push('/questions');
   }
 };
 
