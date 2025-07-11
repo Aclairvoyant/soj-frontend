@@ -4,10 +4,16 @@
   />
 </template>
 
-<script setup>
-import {ref} from 'vue';
-import {MdPreview} from 'md-editor-v3';
+<script setup lang="ts">
+import { withDefaults, defineProps } from 'vue';
+import { MdPreview } from 'md-editor-v3';
 import 'md-editor-v3/lib/preview.css';
 
-const value = ref("");
+interface Props {
+  value?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  value: ''
+});
 </script>

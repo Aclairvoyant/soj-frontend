@@ -4,7 +4,7 @@
       <!-- Logo和标题区域 -->
       <div class="logo-section" @click="goHome">
         <div class="logo-wrapper">
-          <img class="logo" src="../assets/oj-logow.png" alt="SOJ Logo" />
+          <img class="logo" src="@/assets/oj-logow.png" alt="SOJ Logo" />
           <div class="title-container">
             <div class="title">SOJ</div>
             <div class="subtitle">在线判题系统</div>
@@ -21,8 +21,8 @@
           @menu-item-click="doMenuClick"
           class="modern-menu"
         >
-          <a-menu-item 
-            v-for="item in visibleRoutes" 
+          <a-menu-item
+            v-for="item in visibleRoutes"
             :key="item.path"
             class="nav-item"
           >
@@ -34,11 +34,23 @@
         </a-menu>
       </div>
 
+      <!-- 消息中心区域 -->
+      <div class="message-center">
+        <a-badge :count="unreadCount" class="message-badge">
+          <a-tooltip content="消息中心" position="bottom">
+            <a-button type="text" @click="goToMessages" class="message-btn">
+              <icon-message class="message-icon" />
+            </a-button>
+          </a-tooltip>
+        </a-badge>
+
+      </div>
+
       <!-- 用户信息区域 -->
       <div class="user-section">
         <div class="user-info" v-if="store.state.user?.loginUser.userName !== '未登录'">
-          <a-avatar 
-            v-if="store.state.user?.loginUser.userAvatar" 
+          <a-avatar
+            v-if="store.state.user?.loginUser.userAvatar"
             size="medium"
             class="user-avatar"
           >
@@ -72,7 +84,7 @@
             </template>
           </a-dropdown>
         </div>
-        
+
         <!-- 未登录状态 -->
         <div class="auth-buttons" v-else>
           <a-button type="text" @click="goToLogin" class="login-btn">
@@ -112,13 +124,13 @@ import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
 import message from "@arco-design/web-vue/es/message";
-import { Service } from "../../generated";
-import { 
-  IconDown, 
-  IconImport, 
-  IconUser, 
-  IconSettings, 
-  IconExport, 
+import { MsgRemindControllerService, Service } from "../../generated";
+import {
+  IconDown,
+  IconImport,
+  IconUser,
+  IconSettings,
+  IconExport,
   IconUserAdd,
   IconExclamationCircleFill,
   IconHome,
@@ -126,13 +138,15 @@ import {
   IconBook,
   IconMessage,
   IconTrophy,
-  IconUserGroup
+  IconUserGroup,
+  IconNotification
 } from '@arco-design/web-vue/es/icon';
 
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
 const visible = ref(false);
+const unreadCount = ref(0);
 
 const loginUser = store.state.user?.loginUser;
 
@@ -163,9 +177,10 @@ const getMenuIcon = (path: string) => {
   const iconMap: { [key: string]: any } = {
     '/': IconHome,
     '/questions': IconCode,
-    '/problemsets': IconBook,
+    '/problemSets': IconBook,
     '/posts': IconMessage,
     '/workplace': IconTrophy,
+    '/messages': IconNotification,
     '/user': IconUserGroup
   };
   return iconMap[path] || IconHome;
@@ -175,6 +190,11 @@ const doMenuClick = (key: string) => {
   router.push({
     path: key,
   });
+};
+
+// 跳转到消息中心
+const goToMessages = () => {
+  router.push('/messages');
 };
 
 // 跳转到首页
@@ -200,6 +220,20 @@ const goToProfile = () => {
 // 跳转到设置页
 const goToSettings = () => {
   router.push('/settings');
+};
+
+/**
+ * todo 获取消息未读数量
+ */
+const getUnreadMessageCount = async () => {
+  try {
+    const response = await MsgRemindControllerService.getUnreadCountUsingGet1();
+    if(response.code === 200 && response.data) {
+      unreadCount.value = Number(response.data);
+    }
+  } catch (error) {
+    console.error("获取未读消息数量失败", error);
+  }
 };
 
 /**
@@ -239,22 +273,23 @@ const dropSubmit = () => {
 
 <style lang="less" scoped>
 .modern-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: #1e1e1e;
+  border-bottom: 1px solid #333333;
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 1001;
 }
 
 .header-container {
   width: 100%;
+  max-width: none;
   margin: 0;
-  padding: 0 24px;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 70px;
-  gap: 16px;
+  height: 56px;
+  gap: 24px;
   box-sizing: border-box;
 }
 
@@ -263,22 +298,22 @@ const dropSubmit = () => {
   flex-shrink: 0;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 120px;
-  
+  min-width: 140px;
+
   &:hover {
-    transform: scale(1.05);
+    transform: translateY(-1px);
   }
 }
 
 .logo-wrapper {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .logo {
-  height: 48px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  height: 32px;
+  filter: brightness(0) invert(1);
   flex-shrink: 0;
 }
 
@@ -291,19 +326,18 @@ const dropSubmit = () => {
 }
 
 .title {
-  font-size: 28px;
-  font-weight: 800;
-  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
   margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  line-height: 1;
+  line-height: 1.2;
   white-space: nowrap;
 }
 
 .subtitle {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.8);
-  margin: 2px 0 0 0;
+  font-size: 10px;
+  color: #9ca3af;
+  margin: 0;
   font-weight: 400;
   line-height: 1;
   white-space: nowrap;
@@ -315,46 +349,50 @@ const dropSubmit = () => {
   display: flex;
   justify-content: center;
   min-width: 0;
-  max-width: 1800px;
 }
 
 .modern-menu {
   background: transparent;
   border: none;
-  width: 80%;
   display: flex;
   justify-content: center;
-  
+
   :deep(.arco-menu) {
     background: transparent;
     border: none;
     display: flex;
     justify-content: center;
     flex-wrap: nowrap;
-    width: 100%;
+    gap: 4px;
   }
-  
+
   :deep(.arco-menu-item) {
     background: transparent;
     border: none;
-    color: rgba(255, 255, 255, 0.8);
-    margin: 0 2px;
-    border-radius: 12px;
-    transition: all 0.3s ease;
+    color: #9ca3af;
+    margin: 0;
+    border-radius: 6px;
+    transition: all 0.2s ease;
     flex-shrink: 0;
     white-space: nowrap;
     min-width: 0;
-    
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+
     &:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      transform: translateY(-2px);
+      background: #374151;
+      color: #ffffff;
     }
-    
+
     &.arco-menu-selected {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      background: #4f46e5;
+      color: #ffffff;
+      
+      &:hover {
+        background: #6366f1;
+        color: #ffffff;
+      }
     }
   }
 }
@@ -362,14 +400,13 @@ const dropSubmit = () => {
 .menu-item-content {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
+  gap: 6px;
   min-width: 0;
   width: 100%;
 }
 
 .menu-icon {
-  font-size: 12px;
+  font-size: 16px;
   flex-shrink: 0;
 }
 
@@ -380,6 +417,42 @@ const dropSubmit = () => {
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
+}
+
+// 消息中心区域
+.message-center {
+  display: flex;
+  align-items: center;
+  margin-right: 16px;
+
+  .message-btn {
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #374151;
+      color: #ffffff;
+    }
+
+    .message-icon {
+      font-size: 20px;
+    }
+  }
+
+  .message-badge {
+    :deep(.arco-badge-number) {
+      background: #ef4444;
+      border-color: #1e1e1e;
+      font-size: 11px;
+      min-width: 18px;
+      height: 18px;
+      line-height: 16px;
+    }
+  }
 }
 
 // 用户信息区域
@@ -398,7 +471,7 @@ const dropSubmit = () => {
 .user-avatar {
   border: 3px solid rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
-  
+
   &:hover {
     border-color: rgba(255, 255, 255, 0.6);
     transform: scale(1.1);
@@ -417,7 +490,7 @@ const dropSubmit = () => {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   transition: all 0.3s ease;
-  
+
   &:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: translateY(-1px);
@@ -456,7 +529,7 @@ const dropSubmit = () => {
   padding: 6px 12px;
   transition: all 0.3s ease;
   font-size: 14px;
-  
+
   &:hover {
     color: white;
     border-color: rgba(255, 255, 255, 0.6);
@@ -472,7 +545,7 @@ const dropSubmit = () => {
   color: white;
   transition: all 0.3s ease;
   font-size: 14px;
-  
+
   &:hover {
     background: rgba(255, 255, 255, 0.3);
     border-color: rgba(255, 255, 255, 0.6);
@@ -488,40 +561,40 @@ const dropSubmit = () => {
     background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
     color: white;
   }
-  
+
   :deep(.arco-modal-body) {
     padding: 24px;
     background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
     color: #e2e8f0;
   }
-  
+
   :deep(.arco-modal-footer) {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
   }
-  
+
   :deep(.arco-modal-title) {
     color: white;
   }
-  
+
   :deep(.arco-btn) {
     border-radius: 8px;
   }
-  
+
   :deep(.arco-btn-primary) {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
-    
+
     &:hover {
       background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
     }
   }
-  
+
   :deep(.arco-btn-secondary) {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #e2e8f0;
-    
+
     &:hover {
       background: rgba(255, 255, 255, 0.2);
       color: white;
@@ -554,35 +627,35 @@ const dropSubmit = () => {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  
+
   .arco-dropdown-option {
     border-radius: 8px;
     margin: 4px 8px;
     color: #e2e8f0;
-    
+
     &:hover {
       background: rgba(255, 255, 255, 0.1);
       color: white;
     }
-    
+
     .arco-dropdown-option-icon {
       color: #667eea;
     }
   }
-  
+
   .logout-option {
     color: #f53f3f;
-    
+
     &:hover {
       background: rgba(245, 63, 63, 0.1);
       color: #ff6b6b;
     }
-    
+
     .arco-dropdown-option-icon {
       color: #f53f3f;
     }
   }
-  
+
   .arco-dropdown-divider {
     background: rgba(255, 255, 255, 0.1);
     margin: 8px 0;
@@ -595,23 +668,23 @@ const dropSubmit = () => {
     padding: 0 20px;
     gap: 16px;
   }
-  
+
   .logo-section {
     min-width: 100px;
   }
-  
+
   .nav-section {
     max-width: 700px;
   }
-  
+
   .menu-item-content {
     padding: 4px 6px;
   }
-  
+
   .menu-text {
     font-size: 11px;
   }
-  
+
   .menu-icon {
     font-size: 11px;
   }
@@ -622,36 +695,36 @@ const dropSubmit = () => {
     padding: 0 16px;
     gap: 12px;
   }
-  
+
   .logo-section {
     min-width: 90px;
   }
-  
+
   .nav-section {
     display: flex;
     min-width: 0;
     max-width: 600px;
   }
-  
+
   .modern-menu {
     :deep(.arco-menu-item) {
       margin: 0 1px;
     }
   }
-  
+
   .menu-item-content {
     padding: 3px 5px;
     gap: 3px;
   }
-  
+
   .menu-text {
     font-size: 10px;
   }
-  
+
   .menu-icon {
     font-size: 10px;
   }
-  
+
   .user-section {
     min-width: 100px;
     max-width: 180px;
@@ -663,40 +736,40 @@ const dropSubmit = () => {
     padding: 0 12px;
     gap: 10px;
   }
-  
+
   .logo-section {
     min-width: 80px;
   }
-  
+
   .logo-wrapper {
     gap: 10px;
   }
-  
+
   .title {
     font-size: 24px;
   }
-  
+
   .subtitle {
     font-size: 11px;
   }
-  
+
   .nav-section {
     max-width: 500px;
   }
-  
+
   .menu-item-content {
     padding: 2px 4px;
     gap: 2px;
   }
-  
+
   .menu-text {
     font-size: 9px;
   }
-  
+
   .menu-icon {
     font-size: 9px;
   }
-  
+
   .user-section {
     min-width: 90px;
     max-width: 160px;
@@ -708,40 +781,40 @@ const dropSubmit = () => {
     padding: 0 10px;
     gap: 8px;
   }
-  
+
   .logo-section {
     min-width: 70px;
   }
-  
+
   .logo-wrapper {
     gap: 8px;
   }
-  
+
   .title {
     font-size: 22px;
   }
-  
+
   .subtitle {
     font-size: 10px;
   }
-  
+
   .nav-section {
     max-width: 400px;
   }
-  
+
   .menu-item-content {
     padding: 2px 3px;
     gap: 1px;
   }
-  
+
   .menu-text {
     font-size: 8px;
   }
-  
+
   .menu-icon {
     font-size: 8px;
   }
-  
+
   .user-section {
     min-width: 80px;
     max-width: 140px;
@@ -754,35 +827,35 @@ const dropSubmit = () => {
     height: 60px;
     gap: 12px;
   }
-  
+
   .nav-section {
     display: none;
   }
-  
+
   .logo {
     height: 40px;
   }
-  
+
   .title {
     font-size: 22px;
   }
-  
+
   .subtitle {
     font-size: 10px;
   }
-  
+
   .user-profile {
     padding: 4px 8px;
   }
-  
+
   .username {
     font-size: 12px;
   }
-  
+
   .auth-buttons {
     gap: 6px;
   }
-  
+
   .login-btn,
   .register-btn {
     padding: 4px 8px;
@@ -794,28 +867,28 @@ const dropSubmit = () => {
   .header-container {
     padding: 0 8px;
   }
-  
+
   .logo-wrapper {
     gap: 8px;
   }
-  
+
   .logo {
     height: 36px;
   }
-  
+
   .title {
     font-size: 20px;
   }
-  
+
   .subtitle {
     font-size: 9px;
   }
-  
+
   .auth-buttons {
     flex-direction: column;
     gap: 4px;
   }
-  
+
   .login-btn,
   .register-btn {
     padding: 3px 6px;

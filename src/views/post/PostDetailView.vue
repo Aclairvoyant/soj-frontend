@@ -85,6 +85,23 @@
                 </div>
               </template>
 
+              <!-- 评论列表 -->
+              <div class="comment-list">
+                <div v-if="processedComments.length === 0" class="empty-comments">
+                  <icon-message class="empty-icon" />
+                  <span>暂无评论，快来发表第一条评论吧！</span>
+                </div>
+                <div v-else>
+                  <PostCommentItem
+                    v-for="comment in processedComments"
+                    :key="comment.id"
+                    :comment="comment"
+                    :depth="0"
+                    class="comment-item"
+                  />
+                </div>
+              </div>
+
               <!-- 发表评论 -->
               <div class="comment-form">
                 <div class="form-header">
@@ -101,33 +118,6 @@
                     </template>
                     发布评论
                   </a-button>
-                </div>
-              </div>
-
-              <!-- 评论列表 -->
-              <div class="comment-list">
-                <div v-if="processedComments.length === 0" class="empty-comments">
-                  <icon-message class="empty-icon" />
-                  <span>暂无评论，快来发表第一条评论吧！</span>
-                </div>
-                <div v-else>
-                  <PostCommentItem
-                    v-for="comment in processedComments"
-                    :key="comment.id"
-                    :comment="comment"
-                    class="comment-item"
-                  >
-                    <template v-slot:default>
-                      <div v-if="comment.children && comment.children.length > 0" class="nested-comments">
-                        <PostCommentItem
-                          v-for="childComment in comment.children"
-                          :key="childComment.id"
-                          :comment="childComment"
-                          class="nested-comment-item"
-                        />
-                      </div>
-                    </template>
-                  </PostCommentItem>
                 </div>
               </div>
             </a-card>
@@ -523,9 +513,8 @@ const userAvatarImg = computed(() => postDetail.value?.user?.userAvatar);
 }
 
 .comment-list {
-  max-height: 400px;
-  overflow-y: auto;
   padding: 8px 0;
+  margin-bottom: 24px;
 }
 
 .empty-comments {
@@ -585,7 +574,8 @@ const userAvatarImg = computed(() => postDetail.value?.user?.userAvatar);
     margin-bottom: 16px;
   }
   .comment-list {
-    max-height: 240px;
+    padding: 8px 0;
+    margin-bottom: 16px;
   }
   .content-card {
     min-height: calc(100vh - 180px);

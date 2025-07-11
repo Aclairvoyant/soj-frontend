@@ -15,6 +15,11 @@ import PostDetailView from "@/views/post/PostDetailView.vue";
 import AddPostView from "@/views/post/AddPostView.vue";
 import ProblemSetsView from "@/views/question/ProblemSetsView.vue";
 import ManageProblemSetsView from "@/views/question/ManageProblemSetsView.vue";
+import MessageListView from "@/views/message/MessageListView.vue";
+import MessageCenterView from "@/views/message/MessageCenterView.vue";
+import AdminMessageManageView from "@/views/admin/AdminMessageManageView.vue";
+import AdminMessageSendView from "@/views/admin/AdminMessageSendView.vue";
+import AnnouncementListView from "@/views/announcement/AnnouncementListView.vue";
 import NoAuthView from "@/views/NoAuthView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
@@ -96,6 +101,14 @@ export const routes: Array<RouteRecordRaw> = [
         component: QuestionSubmitView,
     },
     {
+        path: "/announcements",
+        name: "公告列表",
+        component: AnnouncementListView,
+        meta: {
+          hideInMenu: true
+        }
+    },
+    {
         path: "/add/announcement",
         name: "添加公告",
         component: AddAnnouncementView,
@@ -134,6 +147,41 @@ export const routes: Array<RouteRecordRaw> = [
         component: Workplace,
         meta: {
             access: accessEnum.USER,
+            hideInMenu: true
+        }
+    },
+    {
+        path: "/messages",
+        name: "消息中心",
+        component: MessageCenterView,
+        meta: {
+          access: accessEnum.USER,
+          hideInMenu: true
+        }
+   },
+    {
+        path: "/messages/list",
+        name: "消息列表",
+        component: MessageListView,
+        meta: {
+          access: accessEnum.USER,
+          hideInMenu: true
+        }
+    },
+    {
+        path: "/admin/messages",
+        name: "消息管理",
+        component: AdminMessageManageView,
+        meta: {
+            access: accessEnum.ADMIN
+        }
+    },
+    {
+        path: "/admin/messages/send",
+        name: "发送消息",
+        component: AdminMessageSendView,
+        meta: {
+            access: accessEnum.ADMIN
         }
     },
     {

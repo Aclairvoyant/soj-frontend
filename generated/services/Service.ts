@@ -15,6 +15,7 @@ import type { BaseResponse_List_PostCommentVO_ } from '../models/BaseResponse_Li
 import type { BaseResponse_List_ProblemSetVO_ } from '../models/BaseResponse_List_ProblemSetVO_';
 import type { BaseResponse_List_Question_ } from '../models/BaseResponse_List_Question_';
 import type { BaseResponse_List_QuestionCommentVO_ } from '../models/BaseResponse_List_QuestionCommentVO_';
+import type { BaseResponse_List_QuestionSolve_ } from '../models/BaseResponse_List_QuestionSolve_';
 import type { BaseResponse_List_QuestionVO_ } from '../models/BaseResponse_List_QuestionVO_';
 import type { BaseResponse_LoginUserVO_ } from '../models/BaseResponse_LoginUserVO_';
 import type { BaseResponse_long_ } from '../models/BaseResponse_long_';
@@ -29,6 +30,7 @@ import type { BaseResponse_Page_User_ } from '../models/BaseResponse_Page_User_'
 import type { BaseResponse_Page_UserVO_ } from '../models/BaseResponse_Page_UserVO_';
 import type { BaseResponse_PersonalDataVO_ } from '../models/BaseResponse_PersonalDataVO_';
 import type { BaseResponse_PostVO_ } from '../models/BaseResponse_PostVO_';
+import type { BaseResponse_ProblemSetProgressStat_ } from '../models/BaseResponse_ProblemSetProgressStat_';
 import type { BaseResponse_ProblemSetVO_ } from '../models/BaseResponse_ProblemSetVO_';
 import type { BaseResponse_Question_ } from '../models/BaseResponse_Question_';
 import type { BaseResponse_QuestionRunResultVO_ } from '../models/BaseResponse_QuestionRunResultVO_';
@@ -901,6 +903,28 @@ export class Service {
         });
     }
     /**
+     * getUserProgressStat
+     * @param setId setId
+     * @returns BaseResponse_ProblemSetProgressStat_ OK
+     * @throws ApiError
+     */
+    public static getUserProgressStatUsingGet(
+        setId: number,
+    ): CancelablePromise<BaseResponse_ProblemSetProgressStat_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/problemSet/progress/stat',
+            query: {
+                'setId': setId,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
      * removeQuestionFromSet
      * @param questionId questionId
      * @param setId setId
@@ -1223,6 +1247,22 @@ export class Service {
             query: {
                 'questionId': questionId,
             },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 获取用户已经解决的题目
+     * @returns BaseResponse_List_QuestionSolve_ OK
+     * @throws ApiError
+     */
+    public static getQuestionSolveUsingGet(): CancelablePromise<BaseResponse_List_QuestionSolve_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/question/getQuestionSolve',
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,

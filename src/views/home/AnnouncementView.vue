@@ -81,6 +81,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { Service } from "../../../generated";
 import { 
   IconRefresh, 
@@ -94,6 +95,7 @@ const announcements = ref([]);
 const activeIndex = ref(0);
 const activeAnnouncement = ref(null);
 const loading = ref(false);
+const router = useRouter();
 
 // 加载数据并初始化激活公告
 onMounted(async () => {
@@ -125,8 +127,7 @@ const refreshAnnouncements = async () => {
 
 // 显示所有公告
 const showAllAnnouncements = () => {
-  // 这里可以跳转到公告列表页面
-  console.log('显示所有公告');
+  router.push('/announcements');
 };
 
 // 设置激活的公告

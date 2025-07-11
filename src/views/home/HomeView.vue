@@ -3,32 +3,29 @@
     <!-- 页面头部 -->
     <div class="page-header">
       <div class="header-content">
-        <h1 class="page-title">欢迎来到 SOJ 在线判题系统</h1>
-        <p class="page-subtitle">提升编程技能，挑战自我极限</p>
-      </div>
-      <div class="header-stats">
-        <div class="stat-item">
-          <div class="stat-number">{{ todayStats.submissions }}</div>
-          <div class="stat-label">今日提交</div>
+        <div class="header-left">
+          <h1 class="page-title">欢迎来到 SOJ 在线判题系统</h1>
+          <p class="page-subtitle">提升编程技能，挑战自我极限</p>
         </div>
-        <div class="stat-item">
-          <div class="stat-number">{{ todayStats.solved }}</div>
-          <div class="stat-label">已解决</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number">{{ todayStats.users }}</div>
-          <div class="stat-label">在线用户</div>
+        <div class="header-stats">
+          <div class="stat-item">
+            <div class="stat-number">{{ todayStats.submissions }}</div>
+            <div class="stat-label">今日提交</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ todayStats.solved }}</div>
+            <div class="stat-label">已解决</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ todayStats.users }}</div>
+            <div class="stat-label">在线用户</div>
+          </div>
         </div>
       </div>
     </div>
 
     <a-row :gutter="24" class="main-content">
       <a-col :span="18">
-        <!-- 轮播图区域 -->
-        <div class="carousel-section">
-          <CarouselView />
-        </div>
-        
         <!-- 帖子列表区域 -->
         <div class="posts-section">
           <PostView />
@@ -65,7 +62,6 @@
 import { ref, onMounted } from 'vue';
 import PostView from "@/views/home/PostView.vue";
 import AnnouncementView from "@/views/home/AnnouncementView.vue";
-import CarouselView from "@/views/home/CarouselView.vue";
 import CheckInCalendar from "@/components/CheckInCalendar.vue";
 import QuickNavigation from "@/components/QuickNavigation.vue";
 import { Service } from '@/../generated/services/Service';
@@ -139,7 +135,14 @@ onMounted(() => {
 .header-content {
   position: relative;
   z-index: 2;
-  margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.header-left {
+  flex: 1;
 }
 
 .page-title {
@@ -158,7 +161,7 @@ onMounted(() => {
 
 .header-stats {
   display: flex;
-  gap: 40px;
+  gap: 24px;
   position: relative;
   z-index: 2;
 }
@@ -194,17 +197,6 @@ onMounted(() => {
 .main-content {
   position: relative;
   z-index: 1;
-}
-
-// 轮播图区域
-.carousel-section {
-  margin-bottom: 32px;
-  
-  :deep(.arco-carousel) {
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  }
 }
 
 // 帖子列表区域
@@ -282,6 +274,16 @@ onMounted(() => {
     padding: 24px;
   }
   
+  .header-content {
+    flex-direction: column;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  
+  .header-left {
+    width: 100%;
+  }
+  
   .page-title {
     font-size: 28px;
   }
@@ -293,6 +295,11 @@ onMounted(() => {
   .header-stats {
     flex-direction: column;
     gap: 16px;
+    width: 100%;
+  }
+  
+  .stat-item {
+    width: 100%;
   }
   
   .posts-section {
