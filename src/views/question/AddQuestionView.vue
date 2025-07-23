@@ -69,6 +69,40 @@
             />
           </a-form-item>
 
+          <a-row :gutter="16">
+            <a-col :span="8">
+              <a-form-item field="isPublic" label="是否公开" class="form-item">
+                <a-select v-model="form.isPublic" placeholder="选择可见性" size="large">
+                  <a-option :value="1">公开</a-option>
+                  <a-option :value="0">私有</a-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :span="8">
+              <a-form-item field="contestOnly" label="是否仅限比赛" class="form-item">
+                <a-select v-model="form.contestOnly" placeholder="选择使用范围" size="large">
+                  <a-option :value="0">否</a-option>
+                  <a-option :value="1">是</a-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :span="8">
+              <a-form-item field="source" label="题目来源" class="form-item">
+                <a-input 
+                  v-model="form.source" 
+                  @update:modelValue="onFieldUpdate" 
+                  placeholder="请输入题目来源" 
+                  size="large"
+                  allow-clear
+                >
+                  <template #prefix>
+                    <icon-link />
+                  </template>
+                </a-input>
+              </a-form-item>
+            </a-col>
+          </a-row>
+
           <!-- 题目内容 -->
           <div class="form-section-title">
             <icon-book class="section-icon" />
@@ -271,6 +305,9 @@ let form = ref({
   tags: [],
   answer: "",
   content: "",
+  isPublic: 1,
+  source: "",
+  contestOnly: 0,
   judgeConfig: {
     memoryLimit: 1000,
     stackLimit: 1000,
@@ -467,6 +504,9 @@ const doCleanDraft = () => {
         tags: [],
         answer: "",
         content: "",
+        isPublic: 1,
+        source: "",
+        contestOnly: 0,
         judgeConfig: {
           memoryLimit: 1000,
           stackLimit: 1000,

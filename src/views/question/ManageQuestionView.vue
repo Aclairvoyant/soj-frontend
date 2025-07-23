@@ -52,6 +52,30 @@
               allow-clear
             />
           </a-form-item>
+          <a-form-item field="isPublic" label="可见性" class="search-item">
+            <a-select 
+              v-model="searchParams.isPublic" 
+              placeholder="选择可见性" 
+              size="large"
+              class="search-select"
+              allow-clear
+            >
+              <a-option :value="1">公开</a-option>
+              <a-option :value="0">私有</a-option>
+            </a-select>
+          </a-form-item>
+          <a-form-item field="contestOnly" label="使用范围" class="search-item">
+            <a-select 
+              v-model="searchParams.contestOnly" 
+              placeholder="选择使用范围" 
+              size="large"
+              class="search-select"
+              allow-clear
+            >
+              <a-option :value="0">所有人</a-option>
+              <a-option :value="1">仅限比赛</a-option>
+            </a-select>
+          </a-form-item>
           <a-form-item class="search-actions">
             <a-space>
               <a-button 
@@ -157,6 +181,31 @@
           <template #acceptedNum="{ record }">
             <div class="accept-info">
               <span class="accept-number">{{ record.acceptedNum }}</span>
+            </div>
+          </template>
+
+          <!-- 是否公开 -->
+          <template #isPublic="{ record }">
+            <div class="public-info">
+              <a-tag :color="record.isPublic === 1 ? 'green' : 'red'">
+                {{ record.isPublic === 1 ? '公开' : '私有' }}
+              </a-tag>
+            </div>
+          </template>
+
+          <!-- 题目来源 -->
+          <template #source="{ record }">
+            <div class="source-info">
+              <span class="source-text">{{ record.source || '-' }}</span>
+            </div>
+          </template>
+
+          <!-- 是否仅限比赛 -->
+          <template #contestOnly="{ record }">
+            <div class="contest-only-info">
+              <a-tag :color="record.contestOnly === 1 ? 'orange' : 'blue'">
+                {{ record.contestOnly === 1 ? '仅限比赛' : '所有人' }}
+              </a-tag>
             </div>
           </template>
 
@@ -268,6 +317,8 @@ const loading = ref(false);
 const searchParams = ref({
   title: "",
   tags: [],
+  isPublic: undefined,
+  contestOnly: undefined,
   pageSize: 10,
   current: 1,
 });
@@ -325,6 +376,8 @@ const resetSearch = () => {
   searchParams.value = {
     title: '',
     tags: [],
+    isPublic: undefined,
+    contestOnly: undefined,
     pageSize: 10,
     current: 1,
   };
@@ -397,6 +450,23 @@ const columns = [
     title: "标签",
     dataIndex: "tags",
     width: 130,
+  },
+  {
+    title: "是否公开",
+    dataIndex: "isPublic",
+    width: 80,
+  },
+  {
+    title: "题目来源",
+    dataIndex: "source",
+    width: 120,
+    ellipsis: true,
+    tooltip: true,
+  },
+  {
+    title: "使用范围",
+    dataIndex: "contestOnly",
+    width: 100,
   },
   // {
   //   title: "答案",
@@ -615,6 +685,11 @@ const doUpdate = (question: Question) => {
   border-radius: 8px;
 }
 
+.search-select {
+  width: 160px;
+  border-radius: 8px;
+}
+
 .search-actions {
   margin-bottom: 0;
 }
@@ -763,6 +838,31 @@ const doUpdate = (question: Question) => {
   font-weight: 600;
   color: #00b42a;
   font-size: 14px;
+}
+
+.public-info {
+  display: flex;
+  align-items: center;
+}
+
+.source-info {
+  display: flex;
+  align-items: center;
+}
+
+.source-text {
+  font-size: 12px;
+  color: #1d2129;
+  font-weight: 500;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contest-only-info {
+  display: flex;
+  align-items: center;
 }
 
 .judge-config-info {

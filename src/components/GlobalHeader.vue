@@ -388,7 +388,7 @@ const dropSubmit = () => {
     &.arco-menu-selected {
       background: #4f46e5;
       color: #ffffff;
-      
+
       &:hover {
         background: #6366f1;
         color: #ffffff;

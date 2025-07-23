@@ -7,10 +7,13 @@ import type { UserVO } from './UserVO';
 export type QuestionVO = {
     acceptedNum?: number;
     content?: string;
+    contestOnly?: number;
     createTime?: string;
     favourNum?: number;
     id?: number;
+    isPublic?: number;
     judgeConfig?: JudgeConfig;
+    source?: string;
     submitNum?: number;
     tags?: Array<string>;
     thumbNum?: number;

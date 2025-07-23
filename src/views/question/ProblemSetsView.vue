@@ -342,7 +342,7 @@ const fetchUserSolvedQuestions = async () => {
 // 获取题单进度统计
 const fetchProblemSetProgress = async (setId: string) => {
   try {
-    const res = await Service.getUserProgressStatUsingGet(setId as string);
+    const res = await Service.getUserProgressStatUsingGet(setId as any);
     // console.log(`获取题单${setId}进度:`, res.data);
     if (res.code === 200 && res.data) {
       problemSetProgress.value.set(setId, {
@@ -376,7 +376,7 @@ const fetchPersonalData = async () => {
 };
 
 // 计算题单完成进度
-const getProgressPercent = (set: ProblemSet): number => {
+const getProgressPercent = (set: ProblemSet): any => {
   const setId = set.id;
   const progress = problemSetProgress.value.get(setId);
   if (!progress) return 0;
@@ -384,7 +384,7 @@ const getProgressPercent = (set: ProblemSet): number => {
 };
 
 // 获取进度文本
-const getProgressText = (set: ProblemSet): string => {
+const getProgressText = (set: ProblemSet): any => {
   const setId = set.id;
   const progress = problemSetProgress.value.get(setId);
 
@@ -395,7 +395,7 @@ const getProgressText = (set: ProblemSet): string => {
   // 备用计算方式
   const totalQuestions = set.questionVOList?.length || 0;
   const solvedCount = set.questionVOList?.filter(q =>
-    solvedQuestions.value.has(Number(q.id))
+    solvedQuestions.value.has(q.id)
   ).length || 0;
 
   return `${solvedCount}/${totalQuestions}`;

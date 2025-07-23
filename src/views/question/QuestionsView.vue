@@ -24,9 +24,9 @@
       <a-card class="search-card" :bordered="false">
         <a-form :model="searchParams" layout="inline" class="search-form">
           <a-form-item field="title" label="题目名称" class="search-item">
-            <a-input 
-              v-model="searchParams.title" 
-              placeholder="请输入题目名称" 
+            <a-input
+              v-model="searchParams.title"
+              placeholder="请输入题目名称"
               size="large"
               class="search-input"
             >
@@ -36,17 +36,17 @@
             </a-input>
           </a-form-item>
           <a-form-item field="tags" label="标签筛选" class="search-item">
-            <a-input-tag 
-              v-model="searchParams.tags" 
-              placeholder="请输入标签" 
+            <a-input-tag
+              v-model="searchParams.tags"
+              placeholder="请输入标签"
               size="large"
               class="tag-input"
             />
           </a-form-item>
           <a-form-item class="search-actions">
             <a-space>
-              <a-button 
-                type="primary" 
+              <a-button
+                type="primary"
                 size="large"
                 @click="doSubmit"
                 class="search-btn"
@@ -56,7 +56,7 @@
                 </template>
                 搜索
               </a-button>
-              <a-button 
+              <a-button
                 size="large"
                 @click="resetSearch"
                 class="reset-btn"
@@ -155,8 +155,8 @@
           <!-- 操作 -->
           <template #optional="{ record }">
             <a-space>
-              <a-button 
-                type="primary" 
+              <a-button
+                type="primary"
                 size="small"
                 @click="toQuestionPage(record)"
                 class="solve-btn"
@@ -337,7 +337,7 @@ const resetSearch = () => {
   margin: 0;
   padding: 24px;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: #f8fafc;
   box-sizing: border-box;
 }
 
@@ -411,9 +411,9 @@ const resetSearch = () => {
 
 .search-card {
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
 }
 
 .search-form {
@@ -430,11 +430,11 @@ const resetSearch = () => {
 }
 
 .search-input {
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .tag-input {
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .search-actions {
@@ -442,28 +442,26 @@ const resetSearch = () => {
 }
 
 .search-btn {
-  background: linear-gradient(135deg, #165dff 0%, #4080ff 100%);
+  background: #165dff;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 8px 20px;
   font-weight: 500;
-  transition: all 0.3s ease;
 }
 
 .search-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(22, 93, 255, 0.3);
+  background: #4080ff;
 }
 
 .reset-btn {
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 8px 20px;
-  transition: all 0.3s ease;
+  border: 1px solid #d9d9d9;
 }
 
 .reset-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #165dff;
+  color: #165dff;
 }
 
 .table-section {
@@ -472,19 +470,18 @@ const resetSearch = () => {
 
 .table-card {
   background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: none;
-  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
 }
 
 .card-title {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 24px 32px;
+  padding: 20px 24px;
   border-bottom: 1px solid #f2f3f5;
-  background: linear-gradient(135deg, #fafbfc 0%, #f5f6f7 100%);
+  background: #fafbfc;
 }
 
 .card-icon {
@@ -503,7 +500,7 @@ const resetSearch = () => {
 }
 
 .table-row {
-  transition: all 0.3s ease;
+  transition: background-color 0.2s ease;
 }
 
 .table-row:hover {
@@ -574,17 +571,15 @@ const resetSearch = () => {
 }
 
 .solve-btn {
-  background: linear-gradient(135deg, #00b42a 0%, #23c343 100%);
+  background: #00b42a;
   border: none;
   border-radius: 6px;
   padding: 6px 12px;
   font-weight: 500;
-  transition: all 0.3s ease;
 }
 
 .solve-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 180, 42, 0.3);
+  background: #23c343;
 }
 
 /* 响应式设计 */
@@ -592,22 +587,22 @@ const resetSearch = () => {
   .questions-view {
     padding: 16px;
   }
-  
+
   .header-content {
     flex-direction: column;
     gap: 16px;
     align-items: flex-start;
   }
-  
+
   .search-form {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .search-item {
     min-width: auto;
   }
-  
+
   .search-actions {
     display: flex;
     justify-content: center;

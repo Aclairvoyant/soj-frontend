@@ -6,6 +6,30 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>在线判题系统</title>
+    <script>
+      // 在页面加载前就处理 ResizeObserver 错误
+      window.addEventListener('error', function(e) {
+        if (e.message && (
+          e.message.includes('ResizeObserver loop completed with undelivered notifications') ||
+          e.message.includes('ResizeObserver loop limit exceeded')
+        )) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          return false;
+        }
+      }, true);
+      
+      // 处理未捕获的 Promise 错误
+      window.addEventListener('unhandledrejection', function(e) {
+        if (e.reason && e.reason.message && (
+          e.reason.message.includes('ResizeObserver') ||
+          e.reason.message.includes('loop completed with undelivered notifications')
+        )) {
+          e.preventDefault();
+          return false;
+        }
+      });
+    </script>
   </head>
   <body>
     <noscript>

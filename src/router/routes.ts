@@ -21,6 +21,13 @@ import AdminMessageManageView from "@/views/admin/AdminMessageManageView.vue";
 import AdminMessageSendView from "@/views/admin/AdminMessageSendView.vue";
 import AnnouncementListView from "@/views/announcement/AnnouncementListView.vue";
 import NoAuthView from "@/views/NoAuthView.vue";
+import ContestListView from "@/views/contest/ContestListView.vue";
+import ContestDetailView from "@/views/contest/ContestDetailView.vue";
+import ContestProblemView from "@/views/contest/ContestProblemView.vue";
+import ContestRankingView from "@/views/contest/ContestRankingView.vue";
+import ContestManageView from "@/views/contest/ContestManageView.vue";
+import AddContestView from "@/views/contest/AddContestView.vue";
+import ContestSubmissionView from "@/views/contest/ContestSubmissionView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
     {
@@ -51,6 +58,73 @@ export const routes: Array<RouteRecordRaw> = [
         path: "/problemSets",
         name: "题单训练",
         component: ProblemSetsView,
+    },
+    {
+        path: "/contests",
+        name: "比赛列表",
+        component: ContestListView,
+    },
+    {
+        path: "/contest/:id",
+        name: "比赛详情",
+        component: ContestDetailView,
+        props: true,
+        meta: {
+            hideInMenu: true
+        }
+    },
+    {
+        path: "/contest/:contestId/problem/:problemId",
+        name: "比赛做题",
+        component: ContestProblemView,
+        props: true,
+        meta: {
+            access: AccessEnum.USER,
+            hideInMenu: true
+        }
+    },
+    {
+        path: "/contest/:id/ranking",
+        name: "比赛排名",
+        component: ContestRankingView,
+        props: true,
+        meta: {
+            hideInMenu: true
+        }
+    },
+    {
+        path: "/contest/:id/submissions",
+        name: "比赛提交记录",
+        component: ContestSubmissionView,
+        props: true,
+        meta: {
+            hideInMenu: true
+        }
+    },
+    {
+        path: "/add/contest",
+        name: "创建比赛",
+        component: AddContestView,
+        meta: {
+            access: AccessEnum.ADMIN
+        }
+    },
+    {
+        path: "/update/contest",
+        name: "更新比赛",
+        component: AddContestView,
+        meta: {
+            access: AccessEnum.ADMIN,
+            hideInMenu: true
+        }
+    },
+    {
+        path: "/manage/contest",
+        name: "管理比赛",
+        component: ContestManageView,
+        meta: {
+            access: AccessEnum.ADMIN
+        }
     },
     {
         path: "/add/post",

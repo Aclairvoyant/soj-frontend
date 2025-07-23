@@ -32,9 +32,9 @@
       <a-card class="search-card" :bordered="false">
         <a-form :model="searchParams" layout="inline" class="search-form">
           <a-form-item field="title" label="题目名称" class="search-item">
-            <a-input 
-              v-model="searchParams.title" 
-              placeholder="请输入题目名称" 
+            <a-input
+              v-model="searchParams.title"
+              placeholder="请输入题目名称"
               size="large"
               class="search-input"
             >
@@ -60,8 +60,8 @@
           </a-form-item>
           <a-form-item class="search-actions">
             <a-space>
-              <a-button 
-                type="primary" 
+              <a-button
+                type="primary"
                 size="large"
                 @click="doSubmit"
                 class="search-btn"
@@ -71,7 +71,7 @@
                 </template>
                 搜索
               </a-button>
-              <a-button 
+              <a-button
                 size="large"
                 @click="resetSearch"
                 class="reset-btn"
@@ -97,7 +97,7 @@
             <a-tag color="blue" class="count-tag">{{ dataList.length }} 条记录</a-tag>
           </div>
         </template>
-        
+
         <a-table
           :ref="tableRef"
           :columns="columns"
@@ -134,7 +134,7 @@
 
           <!-- 判题信息 -->
           <template #judgeInfo="{ record }">
-            <a-tag 
+            <a-tag
               :color="getMessageStyleColor(record.judgeInfo.message)"
               class="judge-tag"
             >
@@ -145,8 +145,8 @@
           <!-- 判题状态 -->
           <template #status="{ record }">
             <div class="status-info">
-              <a-tag 
-                v-if="record.status === 1" 
+              <a-tag
+                v-if="record.status === 1"
                 loading
                 class="status-tag loading"
               >
@@ -370,7 +370,7 @@ const doSubmit = () => {
 
 // 计算通过的提交数
 const acceptedCount = computed(() => {
-  return dataList.value.filter(item => 
+  return dataList.value.filter(item =>
     item.judgeInfo?.message === 'Accepted'
   ).length;
 });
@@ -715,35 +715,35 @@ const resetSearch = () => {
   .question-submit-view {
     padding: 16px;
   }
-  
+
   .header-content {
     flex-direction: column;
     gap: 16px;
     align-items: flex-start;
   }
-  
+
   .header-stats {
     width: 100%;
     justify-content: space-between;
     gap: 16px;
   }
-  
+
   .stat-item {
     flex: 1;
     min-width: auto;
     padding: 12px 16px;
   }
-  
+
   .search-form {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .search-input,
   .language-select {
     width: 100%;
   }
-  
+
   .search-actions {
     display: flex;
     justify-content: space-between;

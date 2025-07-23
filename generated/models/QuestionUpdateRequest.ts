@@ -7,9 +7,12 @@ import type { JudgeConfig } from './JudgeConfig';
 export type QuestionUpdateRequest = {
     answer?: string;
     content?: string;
+    contestOnly?: number;
     id?: number;
+    isPublic?: number;
     judgeCase?: Array<JudgeCase>;
     judgeConfig?: JudgeConfig;
+    source?: string;
     tags?: Array<string>;
     title?: string;
 };

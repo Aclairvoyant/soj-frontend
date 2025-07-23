@@ -44,6 +44,11 @@
           </div>
         </a-grid-item>
       </a-grid>
+      
+      <!-- 积分模块 - 全宽显示 -->
+      <div class="points-section">
+        <PointsModule />
+      </div>
     </div>
   </div>
 </template>
@@ -55,6 +60,7 @@ import PopularContent from "./components/popular-content.vue";
 import CategoriesPercent from "./components/categories-percent.vue";
 import AboutView from "@/views/workplace/components/aboutView.vue";
 import ContentChart from "@/views/workplace/components/content-chart.vue";
+import PointsModule from "./components/points-module.vue";
 </script>
 
 <script lang="ts">
@@ -148,6 +154,10 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+.points-section {
+  margin-top: 24px;
 }
 
 /* 响应式设计 */
