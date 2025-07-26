@@ -287,7 +287,7 @@ import {
   IconPlus,
   IconRefresh,
   IconFilter,
-  IconFileText,
+  IconFile,
   IconBook,
   IconEye,
   IconEyeInvisible,

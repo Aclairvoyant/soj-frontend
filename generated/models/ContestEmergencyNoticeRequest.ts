@@ -2,13 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type AdminSysNoticeAddRequest = {
-    adminId?: number;
+export type ContestEmergencyNoticeRequest = {
     content?: string;
-    problemSetId?: number;
-    recipientId?: number;
-    recipientIdList?: Array<number>;
+    contestId?: number;
+    priority?: number;
     title?: string;
-    type?: string;
 };
 

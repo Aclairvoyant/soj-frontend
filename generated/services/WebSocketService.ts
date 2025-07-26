@@ -42,7 +42,7 @@ export class WebSocketService {
      * @returns any Created
      * @throws ApiError
      */
-    public static closeContestConnectionsUsingPost(
+    public static closeContestConnectionsUsingPost1(
         contestId: number,
     ): CancelablePromise<BaseResponse_boolean_ | any> {
         return __request(OpenAPI, {
@@ -192,7 +192,7 @@ export class WebSocketService {
      * @returns BaseResponse_Map_string_object_ OK
      * @throws ApiError
      */
-    public static getConnectionStatsUsingGet(): CancelablePromise<BaseResponse_Map_string_object_> {
+    public static getConnectionStatsUsingGet1(): CancelablePromise<BaseResponse_Map_string_object_> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/websocket/stats',

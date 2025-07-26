@@ -36,14 +36,7 @@
 
       <!-- 消息中心区域 -->
       <div class="message-center">
-        <a-badge :count="unreadCount" class="message-badge">
-          <a-tooltip content="消息中心" position="bottom">
-            <a-button type="text" @click="goToMessages" class="message-btn">
-              <icon-message class="message-icon" />
-            </a-button>
-          </a-tooltip>
-        </a-badge>
-
+        <MessageBadge />
       </div>
 
       <!-- 用户信息区域 -->
@@ -120,11 +113,12 @@
 <script setup lang="ts">
 import { routes } from "@/router/routes";
 import { useRoute, useRouter } from "vue-router";
-import { computed, ref } from "vue";
+import { computed, ref, watch, onMounted } from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
 import message from "@arco-design/web-vue/es/message";
-import { MsgRemindControllerService, Service } from "../../generated";
+import { Service } from "../../generated";
+import MessageBadge from "@/components/MessageBadge.vue";
 import {
   IconDown,
   IconImport,
@@ -223,14 +217,13 @@ const goToSettings = () => {
 };
 
 /**
- * todo 获取消息未读数量
+ * 获取消息未读数量
  */
 const getUnreadMessageCount = async () => {
   try {
-    const response = await MsgRemindControllerService.getUnreadCountUsingGet1();
-    if(response.code === 200 && response.data) {
-      unreadCount.value = Number(response.data);
-    }
+    // 使用新的统一消息API
+    const totalCount = store.state.message?.totalUnreadCount || 0;
+    unreadCount.value = totalCount;
   } catch (error) {
     console.error("获取未读消息数量失败", error);
   }
@@ -269,6 +262,28 @@ const dropSubmit = () => {
     });
   }
 };
+
+// 监听消息模块的未读数量变化
+watch(
+  () => store.state.message?.totalUnreadCount,
+  (newCount) => {
+    if (newCount !== undefined) {
+      unreadCount.value = newCount;
+    }
+  },
+  { immediate: true }
+);
+
+// 组件挂载时初始化消息模块
+onMounted(async () => {
+  const userId = store.state.user?.loginUser?.id;
+  if (userId && userId !== "未登录") {
+    // 初始化消息模块
+    await store.dispatch('message/initialize', userId);
+    // 获取初始未读数量
+    getUnreadMessageCount();
+  }
+});
 </script>
 
 <style lang="less" scoped>

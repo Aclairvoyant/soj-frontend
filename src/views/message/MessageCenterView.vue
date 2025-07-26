@@ -1,996 +1,938 @@
 <template>
-  <div class="message-center-container">
-    <a-row :gutter="16">
-      <!-- 左侧消息列表 -->
-      <a-col :span="8">
-        <a-card class="message-sidebar" :bordered="false">
-          <template #title>
-            <div class="sidebar-header">
-              <span>消息中心</span>
-              <a-badge v-if="unreadCount > 0" :count="unreadCount" />
-            </div>
-          </template>
-          <template #extra>
-            <a-button type="text" @click="refresh">
-              <template #icon>
-                <icon-refresh />
-              </template>
-            </a-button>
-          </template>
+  <div class="message-center">
+    <!-- 页面头部 -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-left">
+          <h2>
+            <SettingOutlined />
+            消息中心
+          </h2>
+          <p>管理您的所有消息通知</p>
+          <a-tag color="blue" v-if="totalUnread > 0">{{ totalUnread }} 条未读</a-tag>
+        </div>
+        <div class="header-actions">
+          <a-button @click="showSettingsModal = true">
+            <template #icon>
+              <SettingOutlined />
+            </template>
+            推送设置
+          </a-button>
+          <a-button @click="refreshMessages">
+            <template #icon>
+              <ReloadOutlined />
+            </template>
+            刷新
+          </a-button>
+        </div>
+      </div>
+    </div>
 
-          <div class="message-tabs">
-            <a-button
-              type="text"
-              :class="{ active: activeTab === 'remind' }"
-              @click="switchTab('remind')"
-              class="tab-button"
+    <!-- 操作区域 -->
+    <a-card title="消息筛选与操作" class="operations-card">
+      <!-- 分类筛选 -->
+      <div class="filter-section">
+        <div class="filter-left">
+          <a-radio-group v-model:value="selectedCategory" @change="handleCategoryChange">
+            <a-radio value="">全部</a-radio>
+            <a-radio
+              v-for="(label, category) in categoryLabels"
+              :key="category"
+              :value="category"
             >
-              <icon-notification />
-              消息提醒
-              <a-badge v-if="remindUnreadCount > 0" :count="remindUnreadCount" />
-            </a-button>
+              {{ label }}
+              <a-badge
+                v-if="(unreadCount[category] || 0) > 0"
+                :count="unreadCount[category] || 0"
+                :number-style="{ backgroundColor: getCategoryColor(category) }"
+              />
+            </a-radio>
+          </a-radio-group>
+        </div>
+        <div class="filter-right">
+          <a-select
+            v-model:value="selectedStatus"
+            style="width: 120px"
+            @change="handleStatusChange"
+          >
+            <a-option value="">全部状态</a-option>
+            <a-option value="0">未读</a-option>
+            <a-option value="1">已读</a-option>
+          </a-select>
+        </div>
+      </div>
 
-            <a-button
-              type="text"
-              :class="{ active: activeTab === 'system' }"
-              @click="switchTab('system')"
-              class="tab-button"
-            >
-              <icon-exclamation-circle />
-              系统通知
-              <a-badge v-if="systemUnreadCount > 0" :count="systemUnreadCount" />
-            </a-button>
-          </div>
+      <!-- 批量操作栏 -->
+      <div class="batch-actions" v-if="selectedMessages.length > 0">
+        <div class="batch-info">
+          已选择 {{ selectedMessages.length }} 条消息
+        </div>
+        <div class="batch-buttons">
+          <a-button size="small" @click="handleBatchRead">批量标记已读</a-button>
+          <a-button size="small" @click="handleBatchDelete" danger>批量删除</a-button>
+          <a-button size="small" @click="clearSelection">取消选择</a-button>
+        </div>
+      </div>
 
-          <div class="message-list">
-            <a-spin :loading="loading">
-              <div v-if="messageList.length === 0" class="empty-message">
-                <a-empty description="暂无消息" />
-              </div>
-              <div v-else>
-                <div
-                  v-for="message in messageList"
-                  :key="message.id"
-                  class="message-item"
-                  :class="{
-                    active: selectedMessage?.id === message.id,
-                    unread: message.state === 0
-                  }"
-                  @click="selectMessage(message)"
-                >
-                  <div class="message-item-content">
-                    <div class="message-header">
-                      <span class="message-title">
-                        {{ getMessageTitle(message) }}
-                      </span>
-                      <span class="message-time">
-                        {{ formatTime(message.createTime || message.noticeCreateTime) }}
-                      </span>
-                    </div>
-                    <div class="message-summary">
-                      {{ getMessageSummary(message) }}
-                    </div>
-                  </div>
-                  <div v-if="message.state === 0" class="unread-indicator"></div>
-                </div>
-              </div>
-            </a-spin>
-          </div>
+      <!-- 快捷操作 -->
+      <div class="quick-actions">
+        <a-button
+          size="small"
+          @click="handleMarkAllRead"
+          :disabled="!hasUnreadInCurrentView"
+        >
+          <CheckOutlined />
+          全部已读
+        </a-button>
+        <a-button
+          size="small"
+          @click="handleClearAll"
+          danger
+          :disabled="messages.length === 0"
+        >
+          <DeleteOutlined />
+          清空消息
+        </a-button>
+      </div>
+    </a-card>
 
-          <div v-if="hasMore" class="load-more">
-            <a-button type="text" @click="loadMore" :loading="loadingMore">
-              加载更多
-            </a-button>
-          </div>
-        </a-card>
-      </a-col>
+    <!-- 消息列表 -->
+    <a-card title="消息列表" class="message-list-card" v-if="!loading">
+      <div class="message-selector" v-if="messages.length > 0">
+        <a-checkbox
+          v-model:checked="selectAll"
+          :indeterminate="indeterminate"
+          @change="handleSelectAll"
+        >
+          全选
+        </a-checkbox>
+      </div>
 
-      <!-- 右侧消息详情 -->
-      <a-col :span="16">
-        <a-card class="message-detail-card" :bordered="false">
-          <div v-if="!selectedMessage" class="no-selection">
-            <a-empty description="请选择一条消息查看详情" />
-          </div>
+      <div v-if="messages.length === 0" class="empty-state">
+        <a-empty description="暂无消息" />
+      </div>
 
-          <div v-else class="message-detail">
-            <!-- 消息提醒详情 -->
-            <div v-if="activeTab === 'remind'" class="remind-detail">
-              <div class="detail-header">
-                <div class="sender-info">
-                  <a-avatar>
-                    <img :src="selectedMessage.senderAvatar" />
-                  </a-avatar>
-                  <div class="sender-details">
-                    <div class="sender-name">{{ selectedMessage.senderName }}</div>
-                    <div class="action-info">
-                      <a-tag :color="getActionColor(selectedMessage.action)">
-                        {{ getActionText(selectedMessage.action) }}
-                      </a-tag>
-                      <span>了你的{{ getSourceTypeText(selectedMessage.sourceType) }}</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="message-time">
-                  {{ formatTime(selectedMessage.createTime) }}
-                </div>
-              </div>
+      <div v-else class="messages-container">
+        <div
+          v-for="message in messages"
+          :key="message.id"
+          class="message-wrapper"
+        >
+          <a-checkbox
+            v-model:checked="selectedMessages"
+            :value="message.id"
+            class="message-checkbox"
+          />
+          <MessageItem
+            :message="message"
+            @read="handleMessageRead"
+            @delete="handleMessageDelete"
+          />
+        </div>
+      </div>
 
-              <div class="detail-content">
-                <div v-if="selectedMessage.sourceContent" class="source-content">
-                  <div class="content-label">原内容:</div>
-                  <div class="content-text">{{ selectedMessage.sourceContent }}</div>
-                </div>
+      <!-- 分页 -->
+      <div class="pagination" v-if="totalCount > 0">
+        <a-pagination
+          v-model:current="currentPage"
+          :total="totalCount"
+          :page-size="pageSize"
+          :show-total="(total: number, range: [number, number]) => `第 ${range[0]}-${range[1]} 条，共 ${total} 条`"
+          :show-jumper="totalPages > 1"
+          :show-size-changer="true"
+          :page-size-options="['10', '20', '50', '100']"
+          @change="onPageChange"
+          @show-size-change="onPageSizeChange"
+        />
+      </div>
+    </a-card>
 
-                <div v-if="selectedMessage.quoteId" class="quote-content">
-                  <div class="content-label">引用内容:</div>
-                  <div class="content-text">{{ selectedMessage.quoteContent }}</div>
-                </div>
-              </div>
+    <!-- 加载状态 -->
+    <div v-else class="loading-container">
+      <a-spin size="large" />
+    </div>
 
-              <div class="detail-actions">
-                <a-space>
-                  <a-button v-if="selectedMessage.url" type="primary" @click="goToSource">
-                    查看详情
-                  </a-button>
-                  <a-button v-if="selectedMessage.state === 0" @click="markAsRead">
-                    标记已读
-                  </a-button>
-                  <a-button status="danger" @click="deleteMessage">
-                    删除
-                  </a-button>
-                </a-space>
-              </div>
-            </div>
-
-            <!-- 系统通知详情 -->
-            <div v-else-if="activeTab === 'system'" class="system-detail">
-              <div class="detail-header">
-                <div class="notice-title">{{ selectedMessage.noticeTitle }}</div>
-                <div class="notice-meta">
-                  <a-tag :color="getNoticeTypeColor(selectedMessage.noticeType)">
-                    {{ getNoticeTypeText(selectedMessage.noticeType) }}
-                  </a-tag>
-                  <span class="notice-time">{{ formatTime(selectedMessage.noticeCreateTime) }}</span>
-                </div>
-              </div>
-
-              <div class="detail-content">
-                <div class="notice-content" v-html="selectedMessage.noticeContent"></div>
-              </div>
-
-              <div class="detail-actions">
-                <a-space>
-                  <a-button status="danger" @click="deleteSystemNotice">
-                    删除
-                  </a-button>
-                </a-space>
-              </div>
-            </div>
-          </div>
-        </a-card>
-      </a-col>
-    </a-row>
+    <!-- 设置弹窗 -->
+    <MessageSettingsModal
+      v-model:modelValue="showSettingsModal"
+      :key="showSettingsModal ? 'modal-open' : 'modal-closed'"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
-import { Message, Modal } from '@arco-design/web-vue'
+import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { Message } from '@arco-design/web-vue';
 import {
-  IconRefresh,
-  IconNotification,
-  IconExclamationCircle,
-  IconDown,
-  IconMessage,
-  IconUser,
-  IconFile,
-  IconQuote,
-  IconLink,
-  IconCheck,
-  IconDelete
-} from '@arco-design/web-vue/es/icon'
-import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
-import moment from 'moment'
-import {
-  MsgRemindControllerService,
-  UserSysNoticeControllerService
-} from '../../../generated'
-import type { MsgRemindVO, UserSysNoticeVO } from '../../../generated'
+  SettingOutlined,
+  ReloadOutlined,
+  CheckOutlined,
+  DeleteOutlined
+} from '@ant-design/icons-vue';
+import { UnifiedMessageVO } from '../../../generated/models/UnifiedMessageVO';
+import { formatMessageTime, getMessageCategoryInfo, getPriorityInfo } from '@/utils/messageUtils';
+import MessageItem from './components/MessageItem.vue';
+import MessageSettingsModal from './components/MessageSettingsModal.vue';
 
-const router = useRouter()
-const store = useStore()
+// 使用生成的类型
+type MessageCategory = UnifiedMessageVO.categoryEnum;
 
-const activeTab = ref<'remind' | 'system'>('remind')
-const loading = ref(false)
-const loadingMore = ref(false)
-const messageList = ref<(MsgRemindVO | UserSysNoticeVO)[]>([])
-const selectedMessage = ref<MsgRemindVO | UserSysNoticeVO | null>(null)
-const unreadCount = ref(0)
-const remindUnreadCount = ref(0)
-const systemUnreadCount = ref(0)
+const store = useStore();
 
-const pageNum = ref(1)
-const pageSize = ref(20)
-const hasMore = ref(true)
+// 响应式数据
+const loading = ref(false);
+const showSettingsModal = ref(false);
+const selectedCategory = ref<string>('');
+const selectedStatus = ref<number | string>('');
+const selectedMessages = ref<number[]>([]);
+const currentPage = ref(1);
+const pageSize = ref(10);
 
-const formatTime = (time: string | undefined) => {
-  if (!time) return ''
-  return moment(time).fromNow()
-}
+// 计算属性 - 适配新的 message-optimized 模块
+const messages = computed(() => store.state.message.messages);
+const unreadCounts = computed(() => store.state.message.unreadCounts);
+const totalUnread = computed(() => store.getters['message/totalUnreadCount']);
+const totalPages = computed(() => Math.ceil(store.state.message.total / store.state.message.pageSize));
+const totalCount = computed(() => store.state.message.total || 0);
 
-const getActionText = (action: string | undefined) => {
-  const actionMap: Record<string, string> = {
-    'LIKE': '点赞',
-    'COMMENT': '评论',
-    'REPLY': '回复',
-    'FOLLOW': '关注',
-    'MENTION': '提及'
-  }
-  return actionMap[action || ''] || action || ''
-}
+// 分类标签映射 - 使用生成的分类
+const categoryLabels: Record<MessageCategory, string> = {
+  [UnifiedMessageVO.categoryEnum.INTERACTION]: '互动',
+  [UnifiedMessageVO.categoryEnum.SYSTEM]: '系统',
+  [UnifiedMessageVO.categoryEnum.CONTEST]: '比赛',
+  [UnifiedMessageVO.categoryEnum.RATING]: '评级',
+  [UnifiedMessageVO.categoryEnum.JUDGE]: '判题'
+};
 
-const getSourceTypeText = (sourceType: string | undefined) => {
-  const sourceTypeMap: Record<string, string> = {
-    'POST': '帖子',
-    'COMMENT': '评论',
-    'QUESTION': '题目',
-    'SOLUTION': '题解'
-  }
-  return sourceTypeMap[sourceType || ''] || sourceType || ''
-}
+// 未读数量计算 - 适配新结构
+const unreadCount = computed(() => {
+  return {
+    [UnifiedMessageVO.categoryEnum.INTERACTION]: unreadCounts.value.INTERACTION || 0,
+    [UnifiedMessageVO.categoryEnum.SYSTEM]: unreadCounts.value.SYSTEM || 0,
+    [UnifiedMessageVO.categoryEnum.CONTEST]: unreadCounts.value.CONTEST || 0,
+    [UnifiedMessageVO.categoryEnum.RATING]: unreadCounts.value.RATING || 0,
+    [UnifiedMessageVO.categoryEnum.JUDGE]: unreadCounts.value.JUDGE || 0
+  };
+});
 
-const getNoticeTypeText = (noticeType: string | undefined) => {
-  const noticeTypeMap: Record<string, string> = {
-    'SYSTEM': '系统通知',
-    'ANNOUNCEMENT': '公告',
-    'MAINTENANCE': '维护通知',
-    'ACTIVITY': '活动通知'
-  }
-  return noticeTypeMap[noticeType || ''] || noticeType || ''
-}
-
-const getActionColor = (action: string | undefined) => {
-  const colorMap: Record<string, string> = {
-    'LIKE': 'red',
-    'COMMENT': 'blue',
-    'REPLY': 'green',
-    'FOLLOW': 'purple',
-    'MENTION': 'orange'
-  }
-  return colorMap[action || ''] || 'blue'
-}
-
-const getNoticeTypeColor = (noticeType: string | undefined) => {
-  const colorMap: Record<string, string> = {
-    'SYSTEM': 'blue',
-    'ANNOUNCEMENT': 'green',
-    'MAINTENANCE': 'orange',
-    'ACTIVITY': 'purple'
-  }
-  return colorMap[noticeType || ''] || 'blue'
-}
-
-const getMessageTitle = (message: MsgRemindVO | UserSysNoticeVO) => {
-  if ('noticeTitle' in message) {
-    return message.noticeTitle || '系统通知'
-  }
-  return `${message.senderName} ${getActionText(message.action)}了你`
-}
-
-const getMessageSummary = (message: MsgRemindVO | UserSysNoticeVO) => {
-  if ('noticeContent' in message) {
-    const content = message.noticeContent || ''
-    return content.length > 50 ? content.substring(0, 50) + '...' : content
-  }
-  return message.sourceContent || ''
-}
-
-const loadRemindMessages = async (append = false) => {
-  loading.value = !append
-  loadingMore.value = append
-
-  try {
-    const response = await MsgRemindControllerService.pageUsingGet(pageNum.value, pageSize.value)
-    if (response.code === 200 && response.data) {
-      const newMessages = response.data.records || []
-      if (append) {
-        messageList.value = [...messageList.value, ...newMessages]
-      } else {
-        messageList.value = newMessages
-      }
-      hasMore.value = (response.data.total || 0) > messageList.value.length
-    }
-  } catch (error) {
-    console.error('加载消息提醒失败:', error)
-    Message.error('加载消息提醒失败')
-  } finally {
-    loading.value = false
-    loadingMore.value = false
-  }
-}
-
-const loadSystemNotices = async (append = false) => {
-  loading.value = !append
-  loadingMore.value = append
-
-  try {
-    const loginUser = store.state.user.loginUser
-    const response = await UserSysNoticeControllerService.pageUsingGet1(
-      pageNum.value,
-      pageSize.value,
-      loginUser.id
-    )
-    if (response.code === 200 && response.data) {
-      const newMessages = response.data.records || []
-      if (append) {
-        messageList.value = [...messageList.value, ...newMessages]
-      } else {
-        messageList.value = newMessages
-      }
-      hasMore.value = (response.data.total || 0) > messageList.value.length
-    }
-  } catch (error) {
-    console.error('加载系统通知失败:', error)
-    Message.error('加载系统通知失败')
-  } finally {
-    loading.value = false
-    loadingMore.value = false
-  }
-}
-
-const loadUnreadCounts = async () => {
-  try {
-    const remindResponse = await MsgRemindControllerService.getUnreadCountUsingGet1()
-    if (remindResponse.code === 200 && remindResponse.data !== undefined) {
-      remindUnreadCount.value = remindResponse.data
-    }
-  } catch (error) {
-    console.error('加载未读数量失败:', error)
-  }
-}
-
-const switchTab = (tab: 'remind' | 'system') => {
-  activeTab.value = tab
-  pageNum.value = 1
-  selectedMessage.value = null
-  hasMore.value = true
-
-  if (tab === 'remind') {
-    loadRemindMessages()
-  } else {
-    loadSystemNotices()
-  }
-}
-
-const selectMessage = (message: MsgRemindVO | UserSysNoticeVO) => {
-  selectedMessage.value = message
-
-  // 如果是未读消息，自动标记为已读
-  if (message.state === 0) {
-    if (activeTab.value === 'remind') {
-      markAsRead()
-    }
-  }
-}
-
-const markAsRead = async () => {
-  if (!selectedMessage.value || selectedMessage.value.state === 1) return
-
-  try {
-    const response = await MsgRemindControllerService.markAsReadUsingPost(selectedMessage.value.id!)
-    if (response.code === 200) {
-      selectedMessage.value.state = 1
-      // 更新列表中的状态
-      const index = messageList.value.findIndex(m => m.id === selectedMessage.value!.id)
-      if (index !== -1) {
-        messageList.value[index].state = 1
-      }
-      loadUnreadCounts()
-      Message.success('标记已读成功')
-    }
-  } catch (error) {
-    console.error('标记已读失败:', error)
-    Message.error('标记已读失败')
-  }
-}
-
-const deleteMessage = async () => {
-  if (!selectedMessage.value) return
-
-  Modal.confirm({
-    title: '确认删除',
-    content: '确定要删除这条消息吗？',
-    onOk: async () => {
-      try {
-        const response = await MsgRemindControllerService.deleteMessageUsingPost(selectedMessage.value!.id!)
-        if (response.code === 200) {
-          messageList.value = messageList.value.filter(m => m.id !== selectedMessage.value!.id)
-          selectedMessage.value = null
-          loadUnreadCounts()
-          Message.success('删除成功')
-        }
-      } catch (error) {
-        console.error('删除失败:', error)
-        Message.error('删除失败')
-      }
-    }
-  })
-}
-
-const deleteSystemNotice = async () => {
-  if (!selectedMessage.value) return
-
-  Modal.confirm({
-    title: '确认删除',
-    content: '确定要删除这条系统通知吗？',
-    onOk: async () => {
-      try {
-        const loginUser = store.state.user.loginUser
-        const response = await UserSysNoticeControllerService.deleteUsingPost(
-          selectedMessage.value!.id!,
-          loginUser.id
-        )
-        if (response.code === 200) {
-          messageList.value = messageList.value.filter(m => m.id !== selectedMessage.value!.id)
-          selectedMessage.value = null
-          Message.success('删除成功')
-        }
-      } catch (error) {
-        console.error('删除失败:', error)
-        Message.error('删除失败')
-      }
-    }
-  })
-}
-
-const goToSource = () => {
-  const message = selectedMessage.value as MsgRemindVO
-  if (message.url) {
-    if (message.url.startsWith('http')) {
-      window.open(message.url, '_blank')
+// 全选相关
+const selectAll = computed({
+  get: () => {
+    return messages.value.length > 0 && selectedMessages.value.length === messages.value.length;
+  },
+  set: (value: boolean) => {
+    if (value) {
+      selectedMessages.value = messages.value
+        .map((msg: any) => msg.id)
+        .filter((id: any) => id !== undefined) as number[];
     } else {
-      router.push(message.url)
+      selectedMessages.value = [];
     }
   }
-}
+});
 
-const loadMore = () => {
-  pageNum.value += 1
-  if (activeTab.value === 'remind') {
-    loadRemindMessages(true)
-  } else {
-    loadSystemNotices(true)
+const indeterminate = computed(() => {
+  return selectedMessages.value.length > 0 && selectedMessages.value.length < messages.value.length;
+});
+
+// 当前视图是否有未读消息
+const hasUnreadInCurrentView = computed(() => {
+  return messages.value.some((msg: any) => msg.status === 0); // 0 表示未读
+});
+
+// 获取分类颜色
+const getCategoryColor = (category: string): string => {
+  const colors: Record<string, string> = {
+    [UnifiedMessageVO.categoryEnum.INTERACTION]: '#1890ff',
+    [UnifiedMessageVO.categoryEnum.SYSTEM]: '#52c41a',
+    [UnifiedMessageVO.categoryEnum.CONTEST]: '#fa8c16',
+    [UnifiedMessageVO.categoryEnum.RATING]: '#722ed1',
+    [UnifiedMessageVO.categoryEnum.JUDGE]: '#f5222d'
+  };
+  return colors[category] || '#d9d9d9';
+};
+
+// 加载消息列表
+const loadMessages = async () => {
+  try {
+    loading.value = true;
+    const params: any = {
+      reset: true
+    };
+
+    // 确保参数格式正确
+    if (selectedCategory.value && selectedCategory.value.trim() !== '') {
+      params.category = selectedCategory.value;
+    }
+
+    await store.dispatch('message/loadMessages', params);
+
+    // 清除选择
+    selectedMessages.value = [];
+  } catch (error) {
+    Message.error('加载消息失败');
+  } finally {
+    loading.value = false;
   }
-}
+};
 
-const refresh = () => {
-  pageNum.value = 1
-  hasMore.value = true
-  selectedMessage.value = null
+// 刷新消息
+const refreshMessages = async () => {
+  await Promise.all([
+    loadMessages(),
+    store.dispatch('message/loadUnreadCounts')
+  ]);
+  Message.success('刷新成功');
+};
 
-  if (activeTab.value === 'remind') {
-    loadRemindMessages()
-  } else {
-    loadSystemNotices()
+// 处理分类变化
+const handleCategoryChange = () => {
+  currentPage.value = 1;
+  store.dispatch('message/switchCategory', selectedCategory.value);
+};
+
+// 处理状态变化
+const handleStatusChange = () => {
+  currentPage.value = 1;
+  loadMessages();
+};
+
+// 处理页码变化
+const onPageChange = (page: number) => {
+  currentPage.value = page;
+  loadMessages();
+};
+
+// 处理每页大小变化
+const onPageSizeChange = (newPageSize: number) => {
+  currentPage.value = 1;
+  pageSize.value = newPageSize;
+  loadMessages();
+};
+
+// 处理全选
+const handleSelectAll = (checked: boolean) => {
+  selectAll.value = checked;
+};
+
+// 清除选择
+const clearSelection = () => {
+  selectedMessages.value = [];
+};
+
+// 处理消息已读
+const handleMessageRead = (messageId: number) => {
+  // 从选择列表中移除
+  const index = selectedMessages.value.indexOf(messageId);
+  if (index > -1) {
+    selectedMessages.value.splice(index, 1);
   }
-  loadUnreadCounts()
-}
+};
 
-// 计算总未读数量
-const unreadCountComputed = computed(() => {
-  return remindUnreadCount.value + systemUnreadCount.value
-})
+// 处理消息删除
+const handleMessageDelete = (messageId: number) => {
+  // 从选择列表中移除
+  const index = selectedMessages.value.indexOf(messageId);
+  if (index > -1) {
+    selectedMessages.value.splice(index, 1);
+  }
+};
 
-watch(unreadCountComputed, (newCount) => {
-  unreadCount.value = newCount
-})
+// 批量标记已读
+const handleBatchRead = async () => {
+  try {
+    // 使用新的批量标记已读方法
+    for (const messageId of selectedMessages.value) {
+      await store.dispatch('message/markAsRead', messageId);
+    }
+    Message.success(`已标记 ${selectedMessages.value.length} 条消息为已读`);
+    selectedMessages.value = [];
+  } catch (error) {
+    console.error('Failed to batch mark as read:', error);
+    Message.error('批量标记已读失败');
+  }
+};
 
-onMounted(() => {
-  loadRemindMessages()
-  loadUnreadCounts()
-})
+// 批量删除
+const handleBatchDelete = async () => {
+  try {
+    // 使用新的删除方法
+    for (const messageId of selectedMessages.value) {
+      await store.dispatch('message/deleteMessage', messageId);
+    }
+    Message.success(`已删除 ${selectedMessages.value.length} 条消息`);
+    selectedMessages.value = [];
+    // 如果当前页没有消息了，返回上一页
+    if (messages.value.length === 0 && currentPage.value > 1) {
+      currentPage.value--;
+      loadMessages();
+    }
+  } catch (error) {
+    console.error('Failed to batch delete:', error);
+    Message.error('批量删除失败');
+  }
+};
+
+// 全部标记已读
+const handleMarkAllRead = async () => {
+  try {
+    const category = selectedCategory.value as MessageCategory || undefined;
+    await store.dispatch('message/markAllAsRead', category);
+    Message.success('已标记全部消息为已读');
+    loadMessages();
+  } catch (error) {
+    console.error('Failed to mark all as read:', error);
+    Message.error('标记全部已读失败');
+  }
+};
+
+// 清空所有消息
+const handleClearAll = async () => {
+  try {
+    const category = selectedCategory.value as MessageCategory || undefined;
+    // todo message-optimized 模块没有 clearAllMessages action，用删除代替
+    await store.dispatch('message/deleteMessage', category);
+    Message.success('已标记所有消息为已读');
+    currentPage.value = 1;
+    loadMessages();
+  } catch (error) {
+    console.error('Failed to clear all messages:', error);
+    Message.error('清空消息失败');
+  }
+};
+
+// 组件挂载时加载数据
+onMounted(async () => {
+  await Promise.all([
+    loadMessages(),
+    store.dispatch('message/loadUnreadCounts')
+  ]);
+});
 </script>
 
-<style lang="less" scoped>
-.message-center-container {
+<style scoped lang="less">
+.message-center {
   padding: 24px;
-  min-height: calc(100vh - 120px);
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}
+  min-height: 100vh;
 
-.message-sidebar {
-  height: 100%;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  .page-header {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    margin-bottom: 32px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 
-  .sidebar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 0;
-
-    span {
-      font-size: 18px;
-      font-weight: 600;
-      color: #1a1a1a;
-    }
-  }
-
-  .message-tabs {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 20px;
-    padding: 0 8px;
-
-    .tab-button {
+    .header-content {
+      padding: 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      padding: 16px 20px;
-      border-radius: 12px;
-      justify-content: flex-start;
       position: relative;
-      overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      font-weight: 500;
 
       &::before {
         content: '';
         position: absolute;
-        left: 0;
         top: 0;
-        width: 0;
-        height: 100%;
-
-        transition: width 0.3s ease;
-        z-index: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.05"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.3;
       }
 
-      > * {
+      .header-left {
         position: relative;
         z-index: 1;
-      }
 
-      &.active {
-        color: #fff;
-        background: linear-gradient(135deg, #1890ff, #40a9ff);
-        box-shadow: 0 4px 20px rgba(24, 144, 255, 0.3);
-        transform: translateY(-2px);
-
-        &::before {
-          width: 100%;
-        }
-      }
-
-      &:hover:not(.active) {
-        background: linear-gradient(135deg, #f0f9ff, #e6f7ff);
-        color: #1890ff;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 12px rgba(24, 144, 255, 0.15);
-      }
-    }
-  }
-
-  .message-list {
-    max-height: calc(100vh - 380px);
-    overflow-y: auto;
-    padding: 0 8px;
-
-    &::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 10px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #c1c1c1;
-      border-radius: 10px;
-
-      &:hover {
-        background: #a8a8a8;
-      }
-    }
-
-    .empty-message {
-      text-align: center;
-      padding: 60px 20px;
-      color: #999;
-    }
-
-    .message-item {
-      position: relative;
-      padding: 16px;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      margin-bottom: 12px;
-      background: rgba(255, 255, 255, 0.8);
-      border: 1px solid rgba(0, 0, 0, 0.05);
-
-      &::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 0;
-        height: 100%;
-        background: linear-gradient(90deg, #1890ff, #40a9ff);
-        border-radius: 12px 0 0 12px;
-        transition: width 0.3s ease;
-        opacity: 0;
-      }
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.95);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        transform: translateY(-2px);
-
-        &::before {
-          width: 4px;
-          opacity: 1;
-        }
-      }
-
-      &.active {
-        background: linear-gradient(135deg, #e6f7ff, #bae7ff);
-        border-color: #1890ff;
-        box-shadow: 0 4px 24px rgba(24, 144, 255, 0.2);
-        transform: translateY(-1px);
-
-        &::before {
-          width: 4px;
-          opacity: 1;
-        }
-      }
-
-      &.unread {
-        background: linear-gradient(135deg, #fff7e6, #ffecc7);
-        border-left: 4px solid #fa8c16;
-
-        &::after {
-          content: '';
-          position: absolute;
-          top: 16px;
-          right: 16px;
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          background: linear-gradient(45deg, #ff4d4f, #ff7875);
-          box-shadow: 0 0 0 3px rgba(255, 77, 79, 0.2);
-          animation: pulse 2s infinite;
-        }
-      }
-
-      .message-item-content {
-        .message-header {
+        h2 {
+          color: white;
+          margin: 0 0 12px 0;
+          font-size: 32px;
+          font-weight: 700;
           display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          margin-bottom: 8px;
-
-          .message-title {
-            font-weight: 600;
-            color: #1a1a1a;
-            font-size: 14px;
-            line-height: 1.4;
-            flex: 1;
-            margin-right: 8px;
-          }
-
-          .message-time {
-            font-size: 11px;
-            color: #999;
-            white-space: nowrap;
-            background: rgba(153, 153, 153, 0.1);
-            padding: 2px 8px;
-            border-radius: 10px;
-          }
+          align-items: center;
+          gap: 16px;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        .message-summary {
-          font-size: 12px;
-          color: #666;
-          line-height: 1.5;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
+        p {
+          color: rgba(255, 255, 255, 0.9);
+          font-size: 18px;
+          margin: 0 0 16px 0;
+          font-weight: 400;
+          letter-spacing: 0.5px;
+        }
+
+        .ant-tag {
+          border-radius: 8px;
+          font-weight: 600;
+          padding: 6px 16px;
+          font-size: 14px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
       }
 
-      .unread-indicator {
-        display: none;
-      }
-    }
-  }
-
-  .load-more {
-    text-align: center;
-    padding: 20px 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
-    margin-top: 16px;
-
-    .arco-btn {
-      border-radius: 20px;
-      padding: 8px 24px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-
-      &:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
-    }
-  }
-}
-
-.message-detail-card {
-  height: 100%;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-
-  .no-selection {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #999;
-
-    .arco-empty-description {
-      margin-top: 16px;
-      font-size: 16px;
-    }
-  }
-
-  .message-detail {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-
-    .detail-header {
-      padding-bottom: 20px;
-      border-bottom: 2px solid #f0f0f0;
-      margin-bottom: 20px;
-      position: relative;
-
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: -2px;
-        left: 0;
-        width: 60px;
-        height: 2px;
-        background: linear-gradient(90deg, #1890ff, #40a9ff);
-        border-radius: 1px;
-      }
-
-      .sender-info {
+      .header-actions {
         display: flex;
-        align-items: center;
         gap: 16px;
-        margin-bottom: 12px;
+        position: relative;
+        z-index: 1;
 
-        .arco-avatar {
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-          border: 2px solid rgba(255, 255, 255, 0.8);
+        .ant-btn {
+          border-radius: 10px;
+          font-weight: 600;
+          height: 44px;
+          padding: 0 24px;
+          border: 2px solid rgba(255, 255, 255, 0.2);
+          color: white;
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          transition: all 0.3s ease;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+          }
         }
+      }
+    }
+  }
 
-        .sender-details {
-          flex: 1;
+  .operations-card,
+  .message-list-card {
+    margin-bottom: 32px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+    transition: all 0.3s ease;
 
-          .sender-name {
-            font-weight: 600;
-            color: #1a1a1a;
-            font-size: 16px;
-            margin-bottom: 4px;
+    &:hover {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.06);
+      transform: translateY(-2px);
+    }
+
+    :deep(.ant-card-head) {
+      border-bottom: 1px solid rgba(240, 240, 240, 0.8);
+      background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+      border-radius: 16px 16px 0 0;
+
+      .ant-card-head-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1d2129;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+    }
+  }
+
+  .filter-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+
+    .filter-left {
+      flex: 1;
+
+      :deep(.ant-radio-group) {
+        .ant-radio-wrapper {
+          margin-right: 24px;
+          font-weight: 500;
+          color: #475569;
+          transition: all 0.3s ease;
+
+          &:hover {
+            color: #667eea;
           }
 
-          .action-info {
-            font-size: 13px;
-            color: #666;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+          .ant-radio {
+            .ant-radio-inner {
+              border-color: #cbd5e1;
+              transition: all 0.3s ease;
 
-            .arco-tag {
-              font-size: 11px;
-              font-weight: 500;
-              border-radius: 12px;
-              padding: 2px 8px;
+              &:hover {
+                border-color: #667eea;
+              }
+            }
+
+            &.ant-radio-checked .ant-radio-inner {
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              border-color: #667eea;
             }
           }
         }
       }
+    }
 
-      .notice-title {
-        font-size: 20px;
+    .filter-right {
+      margin-left: 24px;
+
+      :deep(.ant-select) {
+        .ant-select-selector {
+          border-radius: 8px;
+          border: 2px solid #e2e8f0;
+          transition: all 0.3s ease;
+
+          &:hover,
+          &:focus,
+          &.ant-select-focused {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+          }
+        }
+      }
+    }
+  }
+
+  .batch-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #fff7e6 0%, #fef3ec 100%);
+    border: 2px solid #ffd591;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(255, 213, 145, 0.3);
+
+    .batch-info {
+      color: #d46b08;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .batch-buttons {
+      display: flex;
+      gap: 12px;
+
+      .ant-btn {
+        border-radius: 8px;
         font-weight: 600;
-        color: #1a1a1a;
-        margin-bottom: 12px;
-        line-height: 1.4;
-      }
-
-      .notice-meta {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-
-        .arco-tag {
-          font-weight: 500;
-          border-radius: 12px;
-          padding: 4px 12px;
-        }
-
-        .notice-time {
-          font-size: 13px;
-          color: #999;
-          background: rgba(153, 153, 153, 0.1);
-          padding: 4px 12px;
-          border-radius: 12px;
-        }
-      }
-
-      .message-time {
-        font-size: 13px;
-        color: #999;
-        background: rgba(153, 153, 153, 0.1);
-        padding: 4px 12px;
-        border-radius: 12px;
-        display: inline-block;
-      }
-    }
-
-    .detail-content {
-      flex: 1;
-      overflow-y: auto;
-
-      &::-webkit-scrollbar {
-        width: 4px;
-      }
-
-      &::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 10px;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
-        border-radius: 10px;
-
-        &:hover {
-          background: #a8a8a8;
-        }
-      }
-
-      .source-content,
-      .quote-content {
-        margin-bottom: 20px;
-
-        .content-label {
-          font-size: 13px;
-          color: #666;
-          margin-bottom: 12px;
-          font-weight: 500;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-
-          .arco-icon {
-            color: #1890ff;
-          }
-        }
-
-        .content-text {
-          padding: 16px 20px;
-          background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-          border-radius: 12px;
-          line-height: 1.6;
-          border: 1px solid rgba(0, 0, 0, 0.05);
-          position: relative;
-
-          &::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, #1890ff, #40a9ff);
-            border-radius: 2px 0 0 2px;
-          }
-        }
-      }
-
-      .notice-content {
-        padding: 20px 24px;
-        background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-        border-radius: 12px;
-        line-height: 1.6;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        position: relative;
-
-        &::before {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 4px;
-          height: 100%;
-          background: linear-gradient(180deg, #1890ff, #40a9ff);
-          border-radius: 2px 0 0 2px;
-        }
-      }
-    }
-
-    .detail-actions {
-      padding-top: 20px;
-      border-top: 2px solid #f0f0f0;
-      margin-top: 20px;
-
-      .arco-btn {
-        border-radius: 20px;
-        padding: 8px 20px;
-        font-weight: 500;
+        height: 36px;
+        padding: 0 16px;
         transition: all 0.3s ease;
 
         &:hover {
           transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        &.arco-btn-primary {
-          background: linear-gradient(135deg, #1890ff, #40a9ff);
-          border: none;
+        &:not(.ant-btn-danger) {
+          border: 2px solid #e2e8f0;
+          color: #64748b;
 
           &:hover {
-            box-shadow: 0 4px 16px rgba(24, 144, 255, 0.3);
+            border-color: #667eea;
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+          }
+        }
+
+        &.ant-btn-danger {
+          &:hover {
+            background: #ff7875;
+            border-color: #ff7875;
           }
         }
       }
     }
   }
-}
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.7;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
+  .quick-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding: 0 20px;
 
-// 响应式设计
-@media (max-width: 768px) {
-  .message-center-container {
+    .ant-btn {
+      border-radius: 8px;
+      font-weight: 600;
+      height: 36px;
+      padding: 0 16px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+
+      &:not(.ant-btn-danger) {
+        border: 2px solid #e2e8f0;
+        color: #64748b;
+
+        &:hover {
+          border-color: #667eea;
+          color: #667eea;
+          background: rgba(102, 126, 234, 0.05);
+        }
+      }
+
+      &.ant-btn-danger {
+        &:hover {
+          background: #ff7875;
+          border-color: #ff7875;
+        }
+      }
+    }
+  }
+
+  .message-selector {
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(240, 240, 240, 0.8);
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+
+    :deep(.ant-checkbox-wrapper) {
+      font-weight: 600;
+      color: #475569;
+
+      .ant-checkbox {
+        .ant-checkbox-inner {
+          border-radius: 4px;
+          border: 2px solid #cbd5e1;
+          transition: all 0.3s ease;
+
+          &:hover {
+            border-color: #667eea;
+          }
+        }
+
+        &.ant-checkbox-checked .ant-checkbox-inner {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border-color: #667eea;
+        }
+      }
+    }
+  }
+
+  .messages-container {
+    .message-wrapper {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 0 24px;
+      border-bottom: 1px solid rgba(240, 240, 240, 0.6);
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        transform: translateX(4px);
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .message-checkbox {
+        margin-top: 24px;
+        flex-shrink: 0;
+
+        :deep(.ant-checkbox) {
+          .ant-checkbox-inner {
+            border-radius: 4px;
+            border: 2px solid #cbd5e1;
+            transition: all 0.3s ease;
+
+            &:hover {
+              border-color: #667eea;
+            }
+          }
+
+          &.ant-checkbox-checked .ant-checkbox-inner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+          }
+        }
+      }
+
+      .message-item {
+        flex: 1;
+        margin: 0;
+        border: none;
+        box-shadow: none;
+        background: transparent;
+        border-radius: 0;
+      }
+    }
+  }
+
+  .pagination {
+    padding: 32px 24px;
+    text-align: center;
+    border-top: 1px solid rgba(240, 240, 240, 0.8);
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+
+    :deep(.ant-pagination) {
+      .ant-pagination-item {
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        transition: all 0.3s ease;
+
+        &:hover {
+          border-color: #667eea;
+          color: #667eea;
+        }
+
+        &.ant-pagination-item-active {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border-color: #667eea;
+        }
+      }
+
+      .ant-pagination-prev,
+      .ant-pagination-next {
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        transition: all 0.3s ease;
+
+        &:hover {
+          border-color: #667eea;
+          color: #667eea;
+        }
+      }
+
+      .ant-select {
+        .ant-select-selector {
+          border-radius: 8px;
+          border: 2px solid #e2e8f0;
+          transition: all 0.3s ease;
+
+          &:hover {
+            border-color: #667eea;
+          }
+        }
+      }
+    }
+  }
+
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(10px);
+  }
+
+  .empty-state {
+    padding: 60px 20px;
+    text-align: center;
+
+    :deep(.ant-empty) {
+      .ant-empty-description {
+        color: #64748b;
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  // 响应式设计
+  @media (max-width: 768px) {
     padding: 16px;
 
-    .arco-row {
+    .page-header .header-content {
       flex-direction: column;
+      gap: 20px;
+      align-items: stretch;
+      padding: 32px 24px;
 
-      .arco-col {
-        width: 100% !important;
-        margin-bottom: 16px;
+      .header-left h2 {
+        font-size: 28px;
+      }
+
+      .header-actions {
+        justify-content: center;
+        width: 100%;
+
+        .ant-btn {
+          flex: 1;
+          max-width: 140px;
+        }
+      }
+    }
+
+    .filter-section {
+      flex-direction: column;
+      gap: 16px;
+      align-items: stretch;
+
+      .filter-right {
+        margin-left: 0;
+        align-self: stretch;
+      }
+    }
+
+    .batch-actions {
+      flex-direction: column;
+      gap: 16px;
+      align-items: stretch;
+
+      .batch-buttons {
+        justify-content: center;
+      }
+    }
+
+    .quick-actions {
+      justify-content: center;
+    }
+
+    .messages-container .message-wrapper {
+      padding: 0 16px;
+
+      &:hover {
+        transform: none;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+
+    .page-header .header-content {
+      padding: 24px 16px;
+
+      .header-left h2 {
+        font-size: 24px;
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+
+    .operations-card,
+    .message-list-card {
+      border-radius: 12px;
+
+      :deep(.ant-card-head) {
+        border-radius: 12px 12px 0 0;
+      }
+    }
+
+    .filter-section {
+      padding: 16px;
+
+      .filter-left {
+        :deep(.ant-radio-group) {
+          .ant-radio-wrapper {
+            margin-right: 12px;
+            margin-bottom: 8px;
+          }
+        }
       }
     }
   }

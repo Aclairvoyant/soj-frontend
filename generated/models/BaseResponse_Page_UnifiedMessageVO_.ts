@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AdminSysNoticeVO } from './AdminSysNoticeVO';
-export type BaseResponse_List_AdminSysNoticeVO_ = {
+import type { Page_UnifiedMessageVO_ } from './Page_UnifiedMessageVO_';
+export type BaseResponse_Page_UnifiedMessageVO_ = {
     code?: number;
-    data?: Array<AdminSysNoticeVO>;
+    data?: Page_UnifiedMessageVO_;
     message?: string;
 };
 

@@ -2,10 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Page_UserSysNoticeVO_ } from './Page_UserSysNoticeVO_';
-export type BaseResponse_Page_UserSysNoticeVO_ = {
+export type BaseResponse_Map_string_long_ = {
     code?: number;
-    data?: Page_UserSysNoticeVO_;
+    data?: Record<string, number>;
     message?: string;
 };
 

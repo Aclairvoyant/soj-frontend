@@ -1,9 +1,14 @@
 import { createStore } from "vuex";
 import user from "@/store/user";
-export default createStore({
+import message from "@/store/modules/message-optimized";
+
+export const store = createStore({
   mutations: {},
   actions: {},
   modules: {
-    user
+    user,
+    message
   },
 });
+
+export default store;

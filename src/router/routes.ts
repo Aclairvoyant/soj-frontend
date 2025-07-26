@@ -15,10 +15,8 @@ import PostDetailView from "@/views/post/PostDetailView.vue";
 import AddPostView from "@/views/post/AddPostView.vue";
 import ProblemSetsView from "@/views/question/ProblemSetsView.vue";
 import ManageProblemSetsView from "@/views/question/ManageProblemSetsView.vue";
-import MessageListView from "@/views/message/MessageListView.vue";
 import MessageCenterView from "@/views/message/MessageCenterView.vue";
-import AdminMessageManageView from "@/views/admin/AdminMessageManageView.vue";
-import AdminMessageSendView from "@/views/admin/AdminMessageSendView.vue";
+import AdminMessageSendView from "@/views/message/AdminMessageSendView.vue";
 import AnnouncementListView from "@/views/announcement/AnnouncementListView.vue";
 import NoAuthView from "@/views/NoAuthView.vue";
 import ContestListView from "@/views/contest/ContestListView.vue";
@@ -28,6 +26,8 @@ import ContestRankingView from "@/views/contest/ContestRankingView.vue";
 import ContestManageView from "@/views/contest/ContestManageView.vue";
 import AddContestView from "@/views/contest/AddContestView.vue";
 import ContestSubmissionView from "@/views/contest/ContestSubmissionView.vue";
+import AdminMessageSendViewOptimized from "@/views/message/AdminMessageSendViewOptimized.vue";
+import AdminMessageSendViewNew from "@/views/message/AdminMessageSendViewNew.vue";
 
 export const routes: Array<RouteRecordRaw> = [
     {
@@ -216,46 +216,29 @@ export const routes: Array<RouteRecordRaw> = [
         }
     },
     {
+        path: "/message/center",
+        name: "消息中心",
+        component: MessageCenterView,
+        meta: {
+            access: AccessEnum.USER,
+            hideInMenu: true
+        }
+    },
+    {
+        path: "/admin/message/send",
+        name: "发送管理消息",
+        component: AdminMessageSendViewOptimized,
+        meta: {
+            access: AccessEnum.ADMIN
+        }
+    },
+    {
         path: "/workplace",
         name: "个人数据总览",
         component: Workplace,
         meta: {
             access: accessEnum.USER,
             hideInMenu: true
-        }
-    },
-    {
-        path: "/messages",
-        name: "消息中心",
-        component: MessageCenterView,
-        meta: {
-          access: accessEnum.USER,
-          hideInMenu: true
-        }
-   },
-    {
-        path: "/messages/list",
-        name: "消息列表",
-        component: MessageListView,
-        meta: {
-          access: accessEnum.USER,
-          hideInMenu: true
-        }
-    },
-    {
-        path: "/admin/messages",
-        name: "消息管理",
-        component: AdminMessageManageView,
-        meta: {
-            access: accessEnum.ADMIN
-        }
-    },
-    {
-        path: "/admin/messages/send",
-        name: "发送消息",
-        component: AdminMessageSendView,
-        meta: {
-            access: accessEnum.ADMIN
         }
     },
     {

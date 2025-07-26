@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { MsgRemindVO } from './MsgRemindVO';
-export type BaseResponse_List_MsgRemindVO_ = {
+import type { UnifiedMessageVO } from './UnifiedMessageVO';
+export type BaseResponse_List_UnifiedMessageVO_ = {
     code?: number;
-    data?: Array<MsgRemindVO>;
+    data?: Array<UnifiedMessageVO>;
     message?: string;
 };
 

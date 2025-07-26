@@ -2,10 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Page_MsgRemindVO_ } from './Page_MsgRemindVO_';
-export type BaseResponse_Page_MsgRemindVO_ = {
+export type BaseResponse_List_long_ = {
     code?: number;
-    data?: Page_MsgRemindVO_;
+    data?: Array<number>;
     message?: string;
 };
 
