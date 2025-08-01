@@ -9,6 +9,8 @@ export type User = {
     isDelete?: number;
     lastLoginTime?: string;
     mpOpenId?: string;
+    permissionVersion?: number;
+    roleId?: number;
     unionId?: string;
     updateTime?: string;
     userAccount?: string;

@@ -1,6 +1,6 @@
 <template>
   <div id="basicLayout">
-    <a-layout style="min-height: 100vh">
+    <a-layout style="min-height: 100vh; display: flex; flex-direction: column;">
       <a-layout-header class="header">
         <GlobalHeader />
       </a-layout-header>
@@ -28,7 +28,7 @@
 }
 
 #basicLayout .content {
-  min-height: calc(100vh - 70px - 400px); // 减去头部和页脚的高度
+  flex: 1;
   background-color: transparent;
   padding: 0;
   margin-bottom: 0;

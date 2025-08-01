@@ -22,6 +22,8 @@ import type { BaseResponse_List_ContestSubmission_ } from '../models/BaseRespons
 import type { BaseResponse_List_ContestVO_ } from '../models/BaseResponse_List_ContestVO_';
 import type { BaseResponse_List_IOIContestRankingVO_ } from '../models/BaseResponse_List_IOIContestRankingVO_';
 import type { BaseResponse_List_OIContestRankingVO_ } from '../models/BaseResponse_List_OIContestRankingVO_';
+import type { BaseResponse_List_PermissionActionVO_ } from '../models/BaseResponse_List_PermissionActionVO_';
+import type { BaseResponse_List_PermissionModuleVO_ } from '../models/BaseResponse_List_PermissionModuleVO_';
 import type { BaseResponse_List_Post_ } from '../models/BaseResponse_List_Post_';
 import type { BaseResponse_List_PostCommentVO_ } from '../models/BaseResponse_List_PostCommentVO_';
 import type { BaseResponse_List_ProblemSetVO_ } from '../models/BaseResponse_List_ProblemSetVO_';
@@ -29,6 +31,7 @@ import type { BaseResponse_List_Question_ } from '../models/BaseResponse_List_Qu
 import type { BaseResponse_List_QuestionCommentVO_ } from '../models/BaseResponse_List_QuestionCommentVO_';
 import type { BaseResponse_List_QuestionSolve_ } from '../models/BaseResponse_List_QuestionSolve_';
 import type { BaseResponse_List_QuestionVO_ } from '../models/BaseResponse_List_QuestionVO_';
+import type { BaseResponse_List_RoleManagementVO_ } from '../models/BaseResponse_List_RoleManagementVO_';
 import type { BaseResponse_List_UserRatingHistoryVO_ } from '../models/BaseResponse_List_UserRatingHistoryVO_';
 import type { BaseResponse_List_UserRatingVO_ } from '../models/BaseResponse_List_UserRatingVO_';
 import type { BaseResponse_List_VirtualParticipationVO_ } from '../models/BaseResponse_List_VirtualParticipationVO_';
@@ -45,6 +48,7 @@ import type { BaseResponse_Page_QuestionSubmitVO_ } from '../models/BaseResponse
 import type { BaseResponse_Page_QuestionVO_ } from '../models/BaseResponse_Page_QuestionVO_';
 import type { BaseResponse_Page_User_ } from '../models/BaseResponse_Page_User_';
 import type { BaseResponse_Page_UserVO_ } from '../models/BaseResponse_Page_UserVO_';
+import type { BaseResponse_PermissionCheckResultVO_ } from '../models/BaseResponse_PermissionCheckResultVO_';
 import type { BaseResponse_PersonalDataVO_ } from '../models/BaseResponse_PersonalDataVO_';
 import type { BaseResponse_PostVO_ } from '../models/BaseResponse_PostVO_';
 import type { BaseResponse_ProblemSetProgressStat_ } from '../models/BaseResponse_ProblemSetProgressStat_';
@@ -55,14 +59,17 @@ import type { BaseResponse_QuestionSubmit_ } from '../models/BaseResponse_Questi
 import type { BaseResponse_QuestionVO_ } from '../models/BaseResponse_QuestionVO_';
 import type { BaseResponse_string_ } from '../models/BaseResponse_string_';
 import type { BaseResponse_User_ } from '../models/BaseResponse_User_';
+import type { BaseResponse_UserPermissionVO_ } from '../models/BaseResponse_UserPermissionVO_';
 import type { BaseResponse_UserRatingVO_ } from '../models/BaseResponse_UserRatingVO_';
 import type { BaseResponse_UserVO_ } from '../models/BaseResponse_UserVO_';
 import type { BaseResponse_VirtualParticipationVO_ } from '../models/BaseResponse_VirtualParticipationVO_';
+import type { BatchRoleUpdateRequest } from '../models/BatchRoleUpdateRequest';
 import type { ContestAddRequest } from '../models/ContestAddRequest';
 import type { ContestQueryRequest } from '../models/ContestQueryRequest';
 import type { ContestRegisterRequest } from '../models/ContestRegisterRequest';
 import type { ContestUpdateRequest } from '../models/ContestUpdateRequest';
 import type { DeleteRequest } from '../models/DeleteRequest';
+import type { PermissionCheckRequest } from '../models/PermissionCheckRequest';
 import type { PostAddRequest } from '../models/PostAddRequest';
 import type { PostCommentAddRequest } from '../models/PostCommentAddRequest';
 import type { PostEditRequest } from '../models/PostEditRequest';
@@ -83,12 +90,16 @@ import type { QuestionSolve } from '../models/QuestionSolve';
 import type { QuestionSubmitAddRequest } from '../models/QuestionSubmitAddRequest';
 import type { QuestionSubmitQueryRequest } from '../models/QuestionSubmitQueryRequest';
 import type { QuestionUpdateRequest } from '../models/QuestionUpdateRequest';
+import type { RoleAddRequest } from '../models/RoleAddRequest';
+import type { RolePermissionConfigRequest } from '../models/RolePermissionConfigRequest';
+import type { RoleUpdateRequest } from '../models/RoleUpdateRequest';
 import type { UserAddRequest } from '../models/UserAddRequest';
 import type { UserForgetPasswordRequest } from '../models/UserForgetPasswordRequest';
 import type { UserLoginByMailRequest } from '../models/UserLoginByMailRequest';
 import type { UserLoginRequest } from '../models/UserLoginRequest';
 import type { UserQueryRequest } from '../models/UserQueryRequest';
 import type { UserRegisterRequest } from '../models/UserRegisterRequest';
+import type { UserRoleUpdateRequest } from '../models/UserRoleUpdateRequest';
 import type { UserUpdateMyRequest } from '../models/UserUpdateMyRequest';
 import type { UserUpdateRequest } from '../models/UserUpdateRequest';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -1960,6 +1971,512 @@ export class Service {
             formData: {
                 'file': file,
             },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 获取权限操作列表
+     * @param moduleCode moduleCode
+     * @returns BaseResponse_List_PermissionActionVO_ OK
+     * @throws ApiError
+     */
+    public static getActionListUsingGet(
+        moduleCode?: string,
+    ): CancelablePromise<BaseResponse_List_PermissionActionVO_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/permission/action/list',
+            query: {
+                'moduleCode': moduleCode,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 清理指定类型权限缓存
+     * @param type 缓存类型
+     * @returns BaseResponse_string_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static clearPermissionCacheUsingPost(
+        type: 'user' | 'role' | 'resource' | 'all',
+    ): CancelablePromise<BaseResponse_string_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/permission/cache/clear/{type}',
+            path: {
+                'type': type,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 获取单个缓存详情
+     * @param cacheKey 缓存键
+     * @returns BaseResponse_Map_string_object_ OK
+     * @throws ApiError
+     */
+    public static getCacheDetailUsingGet(
+        cacheKey: string,
+    ): CancelablePromise<BaseResponse_Map_string_object_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/permission/cache/detail',
+            query: {
+                'cacheKey': cacheKey,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 清理单个缓存
+     * @param cacheKey 缓存键
+     * @returns BaseResponse_string_ OK
+     * @throws ApiError
+     */
+    public static clearSingleCacheUsingDelete(
+        cacheKey: string,
+    ): CancelablePromise<BaseResponse_string_> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/permission/cache/single',
+            query: {
+                'cacheKey': cacheKey,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+            },
+        });
+    }
+    /**
+     * 获取权限缓存统计信息
+     * @returns BaseResponse_Map_string_object_ OK
+     * @throws ApiError
+     */
+    public static getCacheStatsUsingGet(): CancelablePromise<BaseResponse_Map_string_object_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/permission/cache/stats',
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 权限缓存预热
+     * @returns BaseResponse_string_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static warmUpCacheUsingPost(): CancelablePromise<BaseResponse_string_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/permission/cache/warmup',
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 检查用户权限
+     * @param request request
+     * @returns BaseResponse_PermissionCheckResultVO_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static checkUserPermissionUsingPost(
+        request: PermissionCheckRequest,
+    ): CancelablePromise<BaseResponse_PermissionCheckResultVO_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/permission/check',
+            body: request,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 导出操作日志
+     * @param current
+     * @param endTime
+     * @param operationResult
+     * @param operationType
+     * @param operatorId
+     * @param operatorName
+     * @param pageSize
+     * @param sortField
+     * @param sortOrder
+     * @param startTime
+     * @param targetType
+     * @param format format
+     * @returns BaseResponse_string_ OK
+     * @throws ApiError
+     */
+    public static exportOperationLogsUsingGet(
+        current?: number,
+        endTime?: string,
+        operationResult?: number,
+        operationType?: string,
+        operatorId?: number,
+        operatorName?: string,
+        pageSize?: number,
+        sortField?: string,
+        sortOrder?: string,
+        startTime?: string,
+        targetType?: string,
+        format: string = 'excel',
+    ): CancelablePromise<BaseResponse_string_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/permission/log/export',
+            query: {
+                'current': current,
+                'endTime': endTime,
+                'operationResult': operationResult,
+                'operationType': operationType,
+                'operatorId': operatorId,
+                'operatorName': operatorName,
+                'pageSize': pageSize,
+                'sortField': sortField,
+                'sortOrder': sortOrder,
+                'startTime': startTime,
+                'targetType': targetType,
+                'format': format,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 获取操作日志列表
+     * @param current
+     * @param endTime
+     * @param operationResult
+     * @param operationType
+     * @param operatorId
+     * @param operatorName
+     * @param pageSize
+     * @param sortField
+     * @param sortOrder
+     * @param startTime
+     * @param targetType
+     * @returns BaseResponse_Map_string_object_ OK
+     * @throws ApiError
+     */
+    public static getOperationLogListUsingGet(
+        current?: number,
+        endTime?: string,
+        operationResult?: number,
+        operationType?: string,
+        operatorId?: number,
+        operatorName?: string,
+        pageSize?: number,
+        sortField?: string,
+        sortOrder?: string,
+        startTime?: string,
+        targetType?: string,
+    ): CancelablePromise<BaseResponse_Map_string_object_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/permission/log/list',
+            query: {
+                'current': current,
+                'endTime': endTime,
+                'operationResult': operationResult,
+                'operationType': operationType,
+                'operatorId': operatorId,
+                'operatorName': operatorName,
+                'pageSize': pageSize,
+                'sortField': sortField,
+                'sortOrder': sortOrder,
+                'startTime': startTime,
+                'targetType': targetType,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 获取权限模块列表
+     * @returns BaseResponse_List_PermissionModuleVO_ OK
+     * @throws ApiError
+     */
+    public static getModuleListUsingGet(): CancelablePromise<BaseResponse_List_PermissionModuleVO_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/permission/module/list',
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 创建角色
+     * @param request request
+     * @returns BaseResponse_long_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static createRoleUsingPost(
+        request: RoleAddRequest,
+    ): CancelablePromise<BaseResponse_long_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/permission/role',
+            body: request,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 获取角色列表
+     * @returns BaseResponse_List_RoleManagementVO_ OK
+     * @throws ApiError
+     */
+    public static getRoleListUsingGet(): CancelablePromise<BaseResponse_List_RoleManagementVO_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/permission/role/list',
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 修改角色
+     * @param roleId 角色ID
+     * @param request request
+     * @returns BaseResponse_string_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static updateRoleUsingPut(
+        roleId: number,
+        request: RoleUpdateRequest,
+    ): CancelablePromise<BaseResponse_string_ | any> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/permission/role/{roleId}',
+            path: {
+                'roleId': roleId,
+            },
+            body: request,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 删除角色
+     * @param roleId 角色ID
+     * @returns BaseResponse_string_ OK
+     * @throws ApiError
+     */
+    public static deleteRoleUsingDelete(
+        roleId: number,
+    ): CancelablePromise<BaseResponse_string_> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/permission/role/{roleId}',
+            path: {
+                'roleId': roleId,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+            },
+        });
+    }
+    /**
+     * 获取指定角色的权限操作列表
+     * @param roleId 角色ID
+     * @returns BaseResponse_List_PermissionActionVO_ OK
+     * @throws ApiError
+     */
+    public static getRoleActionsUsingGet(
+        roleId: number,
+    ): CancelablePromise<BaseResponse_List_PermissionActionVO_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/permission/role/{roleId}/actions',
+            path: {
+                'roleId': roleId,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 配置角色权限
+     * @param roleId 角色ID
+     * @param request request
+     * @returns BaseResponse_string_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static configureRolePermissionsUsingPost(
+        roleId: number,
+        request: RolePermissionConfigRequest,
+    ): CancelablePromise<BaseResponse_string_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/permission/role/{roleId}/actions',
+            path: {
+                'roleId': roleId,
+            },
+            body: request,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 批量修改用户角色
+     * @param request request
+     * @returns BaseResponse_string_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static batchUpdateUserRolesUsingPost(
+        request: BatchRoleUpdateRequest,
+    ): CancelablePromise<BaseResponse_string_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/permission/user/batch-role',
+            body: request,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 获取用户权限列表
+     * @param current
+     * @param pageSize
+     * @param roleCode
+     * @param sortField
+     * @param sortOrder
+     * @param userAccount
+     * @param userName
+     * @returns BaseResponse_Map_string_object_ OK
+     * @throws ApiError
+     */
+    public static getUserPermissionListUsingGet(
+        current?: number,
+        pageSize?: number,
+        roleCode?: string,
+        sortField?: string,
+        sortOrder?: string,
+        userAccount?: string,
+        userName?: string,
+    ): CancelablePromise<BaseResponse_Map_string_object_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/permission/user/list',
+            query: {
+                'current': current,
+                'pageSize': pageSize,
+                'roleCode': roleCode,
+                'sortField': sortField,
+                'sortOrder': sortOrder,
+                'userAccount': userAccount,
+                'userName': userName,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 获取用户权限信息
+     * @param userId 用户ID
+     * @returns BaseResponse_UserPermissionVO_ OK
+     * @throws ApiError
+     */
+    public static getUserPermissionsUsingGet(
+        userId: number,
+    ): CancelablePromise<BaseResponse_UserPermissionVO_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/permission/user/{userId}',
+            path: {
+                'userId': userId,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
+     * 修改用户角色
+     * @param userId 用户ID
+     * @param request request
+     * @returns BaseResponse_string_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static updateUserRoleUsingPut(
+        userId: number,
+        request: UserRoleUpdateRequest,
+    ): CancelablePromise<BaseResponse_string_ | any> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/permission/user/{userId}/role',
+            path: {
+                'userId': userId,
+            },
+            body: request,
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,

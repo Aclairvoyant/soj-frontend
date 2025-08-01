@@ -111,6 +111,17 @@ import {
   RequestOption,
 } from "@arco-design/web-vue";
 
+// 角色映射函数
+const getRoleDisplayInfo = (role: string) => {
+  const roleMap = {
+    'super_admin': { text: '超级管理员', color: 'purple' },
+    'admin': { text: '管理员', color: 'red' },
+    'user': { text: '普通用户', color: 'blue' },
+    'ban': { text: '被封禁', color: 'gray' }
+  };
+  return roleMap[role as keyof typeof roleMap] || { text: '未知角色', color: 'gray' };
+};
+
 const store = useStore();
 const loginUser: LoginUserVO = computed(
   () => store.state.user?.loginUser
@@ -123,7 +134,7 @@ const data = [
   },
   {
     label: "用户角色",
-    value: store.state.user?.loginUser.userRole,
+    value: getRoleDisplayInfo(store.state.user?.loginUser?.userRole || '').text,
   },
   {
     label: "用户简介",

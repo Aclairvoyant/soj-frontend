@@ -28,6 +28,13 @@ import AddContestView from "@/views/contest/AddContestView.vue";
 import ContestSubmissionView from "@/views/contest/ContestSubmissionView.vue";
 import AdminMessageSendViewOptimized from "@/views/message/AdminMessageSendViewOptimized.vue";
 import AdminMessageSendViewNew from "@/views/message/AdminMessageSendViewNew.vue";
+import PermissionManagement from "@/views/permission/PermissionManagement.vue";
+import UserManagement from "@/views/permission/UserManagement.vue";
+import RoleManagement from "@/views/permission/RoleManagement.vue";
+import PermissionConfig from "@/views/permission/PermissionConfig.vue";
+import OperationLog from "@/views/permission/OperationLog.vue";
+import PermissionChecker from "@/views/permission/PermissionChecker.vue";
+import CacheManagement from "@/views/permission/CacheManagement.vue";
 
 export const routes: Array<RouteRecordRaw> = [
     {
@@ -231,6 +238,71 @@ export const routes: Array<RouteRecordRaw> = [
         meta: {
             access: AccessEnum.ADMIN
         }
+    },
+    {
+        path: "/permission",
+        name: "权限管理",
+        component: PermissionManagement,
+        meta: {
+            access: AccessEnum.ADMIN,
+            hideInMenu: true
+        },
+        children: [
+            {
+                path: "/permission/users",
+                name: "用户权限管理",
+                component: UserManagement,
+                meta: {
+                    access: AccessEnum.ADMIN,
+                    hideInMenu: true
+                }
+            },
+            {
+                path: "/permission/roles",
+                name: "角色权限管理",
+                component: RoleManagement,
+                meta: {
+                    access: AccessEnum.ADMIN,
+                    hideInMenu: true
+                }
+            },
+            {
+                path: "/permission/config",
+                name: "权限配置管理",
+                component: PermissionConfig,
+                meta: {
+                    access: AccessEnum.ADMIN,
+                    hideInMenu: true
+                }
+            },
+            {
+                path: "/permission/logs",
+                name: "权限操作日志",
+                component: OperationLog,
+                meta: {
+                    access: AccessEnum.ADMIN,
+                    hideInMenu: true
+                }
+            },
+            {
+                path: "/permission/checker",
+                name: "权限检查工具",
+                component: PermissionChecker,
+                meta: {
+                    access: AccessEnum.ADMIN,
+                    hideInMenu: true
+                }
+            },
+            {
+                path: "/permission/cache",
+                name: "权限缓存管理",
+                component: CacheManagement,
+                meta: {
+                    access: AccessEnum.ADMIN,
+                    hideInMenu: true
+                }
+            }
+        ]
     },
     {
         path: "/workplace",

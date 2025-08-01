@@ -4,7 +4,9 @@
 /* eslint-disable */
 export type ProblemUpdateNoticeRequest = {
     contestId?: number;
+    priority?: number;
     questionId?: number;
+    title?: string;
     updateContent?: string;
 };
 
